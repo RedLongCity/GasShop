@@ -52,7 +52,7 @@ public class GasStationImpl implements GasStationDao {
         try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
-            String query = "select from fuels where id = ?";
+            String query = "select * from fuels where gas_station_id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
@@ -72,7 +72,7 @@ public class GasStationImpl implements GasStationDao {
         try {
             tx.begin();
 
-            String query = "insert into gas_sations (id, name) values(?, ?)";
+            String query = "insert into gas_sations (gas_station_id, gas_station_name) values(?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, station.getId());
             statement.setString(2, station.getName());
@@ -97,7 +97,7 @@ public class GasStationImpl implements GasStationDao {
         try {
             tx.begin();
 
-            String query = "delete from gas_stations where id= ?";
+            String query = "delete from gas_stations where gas_station_id= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, station.getId());
             statement.executeUpdate();
@@ -117,7 +117,7 @@ public class GasStationImpl implements GasStationDao {
     @Override
     public void update(GasStation station) {
         try {
-            String query = "update gas_stations set name= ? where id = ?";
+            String query = "update gas_stations set gas_station_name= ? where gas_station_id = ?";
             PreparedStatement statement = tx.getConnection().
                     prepareStatement(query);
             statement.setString(1, station.getName());
@@ -132,8 +132,8 @@ public class GasStationImpl implements GasStationDao {
         GasStation station = new GasStation();
 
         try {
-            station.setId(set.getInt("id"));
-            station.setName(set.getString("name"));
+            station.setId(set.getInt("gas_station_id"));
+            station.setName(set.getString("gas_station_name"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }

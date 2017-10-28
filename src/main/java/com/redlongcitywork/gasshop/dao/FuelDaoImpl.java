@@ -51,7 +51,7 @@ public class FuelDaoImpl implements FuelDao {
         Fuel fuel = null;
         try {
             Connection connection = ConnectionProvider.getInstance().getConnection();
-            String query = "select from fuels where id= ?";
+            String query = "select * from fuels where fuel_id= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
@@ -71,7 +71,7 @@ public class FuelDaoImpl implements FuelDao {
         try {
             tx.begin();
 
-            String query = "insert into fuels (id, name) values (?, ?)";
+            String query = "insert into fuels (fuel_id, fuel_name) values (?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, fuel.getId());
             statement.setString(2, fuel.getName());
@@ -98,7 +98,7 @@ public class FuelDaoImpl implements FuelDao {
         try {
             tx.begin();
 
-            String query = "delete from fuels where id = ?";
+            String query = "delete from fuels where fuel_id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, fuel.getId());
             statement.executeUpdate();
@@ -118,7 +118,7 @@ public class FuelDaoImpl implements FuelDao {
     @Override
     public void update(Fuel fuel) {
         try {
-            String query = "update fuels set name = ? where id= ?";
+            String query = "update fuels set fuel_name = ? where fuel_id= ?";
 
             PreparedStatement statement = tx.getConnection().
                     prepareStatement(query);
@@ -134,8 +134,8 @@ public class FuelDaoImpl implements FuelDao {
         Fuel fuel = new Fuel();
 
         try {
-            fuel.setId(resultSet.getInt("id"));
-            fuel.setName(resultSet.getString("name"));
+            fuel.setId(resultSet.getInt("fuel_id"));
+            fuel.setName(resultSet.getString("fuel_name"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }

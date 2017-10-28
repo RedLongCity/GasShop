@@ -51,7 +51,7 @@ public class UserProfilleDaoImpl implements UserProfileDao {
         UserProfile profile = null;
         try {
             Connection connection = ConnectionProvider.getInstance().getConnection();
-            String query = "select from user_profiles where id= ?";
+            String query = "select * from user_profiles where user_profiles_id= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
@@ -70,7 +70,7 @@ public class UserProfilleDaoImpl implements UserProfileDao {
         try {
             tx.begin();
 
-            String query = "insert into user_profiles (id, type) values (?, ?)";
+            String query = "insert into user_profiles (user_profiles_id, user_profiles_type) values (?, ?)";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, profile.getId());
             statement.setString(2, profile.getType());
@@ -95,7 +95,7 @@ public class UserProfilleDaoImpl implements UserProfileDao {
         try {
             tx.begin();
 
-            String query = "delete user_profiles where id= ?";
+            String query = "delete user_profiles where user_profiles_id= ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, profile.getId());
             statement.executeUpdate();
@@ -115,7 +115,7 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     @Override
     public void update(UserProfile profile) {
         try{
-            String query = "update user_profiles set type= ?, where id= ?";
+            String query = "update user_profiles set user_profiles_type= ?, where user_profiles_id= ?";
             PreparedStatement statement = tx.getConnection().
                     prepareStatement(query);
             statement.setString(1, profile.getType());
@@ -129,8 +129,8 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     private UserProfile convert(ResultSet set) {
         UserProfile profile = new UserProfile();
         try {
-            profile.setId(set.getInt("id"));
-            profile.setType(set.getString("type"));
+            profile.setId(set.getInt("user_profiles_id"));
+            profile.setType(set.getString("user_profiles_type"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
