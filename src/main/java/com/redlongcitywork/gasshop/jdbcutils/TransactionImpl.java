@@ -4,12 +4,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author redlongcity 
  * 28/10/2017
  */
+@Repository("transaction")
 public class TransactionImpl implements Transaction {
 
     private static final Logger LOG = Logger.getLogger(TransactionImpl.class.getName());

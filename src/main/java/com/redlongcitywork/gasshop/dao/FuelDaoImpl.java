@@ -23,7 +23,7 @@ import org.springframework.stereotype.Repository;
 public class FuelDaoImpl implements FuelDao {
 
     @Autowired
-    Transaction tx;
+    private Transaction tx;
 
     private static final Logger LOG = Logger.getLogger(FuelDaoImpl.class.getName());
 
