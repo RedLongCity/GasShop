@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.models.configuration;
+package com.redlongcitywork.gasshop.configuration;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

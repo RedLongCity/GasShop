@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.models.configuration;
+package com.redlongcitywork.gasshop.configuration;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
