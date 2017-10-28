@@ -7,7 +7,7 @@ package com.redlongcitywork.gasshop.models;
 
 /**
  *
- * @author redlo
+ * @author redlongcity
  */
 public class gasmodel {
     
