@@ -1,8 +1,9 @@
-package com.redlongcitywork.gasshop.dao;
+package com.redlongcitywork.gasshop.jdbcDaoImpls;
 
+import com.redlongcitywork.gasshop.dao.FuelDao;
 import static com.google.common.base.Preconditions.checkNotNull;
-import com.redlongcitywork.gasshop.jdbcutils.ConnectionProvider;
-import com.redlongcitywork.gasshop.jdbcutils.Transaction;
+import com.redlongcitywork.gasshop.jdbcUtils.ConnectionProvider;
+import com.redlongcitywork.gasshop.jdbcUtils.Transaction;
 import com.redlongcitywork.gasshop.models.Fuel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
