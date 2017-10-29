@@ -1,5 +1,6 @@
 package com.redlongcitywork.gasshop.jdbcTemplateUtils;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.UserProfileDao;
 import com.redlongcitywork.gasshop.models.UserProfile;
 import java.util.List;

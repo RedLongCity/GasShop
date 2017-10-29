@@ -16,9 +16,13 @@ public class User {
     
     private String email;
     
+    private String tel;
+    
     private String address;
     
     private String password;
+    
+    private UserProfile profile;
 
     public int getId() {
         return id;
@@ -68,10 +72,25 @@ public class User {
         this.password = password;
     }
 
+    public UserProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(UserProfile profile) {
+        this.profile = profile;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", address=" + address + ", password=" + password + '}';
+        return "User{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", tel=" + tel + ", address=" + address + ", password=" + password + ", profile=" + profile + '}';
     }
-    
     
 }

@@ -11,6 +11,10 @@ public class Reference {
     private Integer id;
     
     private float cost;
+    
+    private GasStation station;
+    
+    private Fuel fuel;
 
     public Integer getId() {
         return id;
@@ -28,10 +32,25 @@ public class Reference {
         this.cost = cost;
     }
 
+    public GasStation getStation() {
+        return station;
+    }
+
+    public void setStation(GasStation station) {
+        this.station = station;
+    }
+
+    public Fuel getFuel() {
+        return fuel;
+    }
+
+    public void setFuel(Fuel fuel) {
+        this.fuel = fuel;
+    }
+
     @Override
     public String toString() {
-        return "Reference{" + "id=" + id + ", cost=" + cost + '}';
+        return "Reference{" + "id=" + id + ", cost=" + cost + ", station=" + station + ", fuel=" + fuel + '}';
     }
-    
     
 }
