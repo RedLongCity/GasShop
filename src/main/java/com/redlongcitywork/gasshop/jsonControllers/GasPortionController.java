@@ -60,7 +60,6 @@ public class GasPortionController {
         entity.setAmount(portion.getAmount());
         entity.setStation(portion.getStation());
         entity.setFuel(portion.getFuel());
-        entity.setOrders(portion.getOrders());
         service.updateGasPortion(entity);
 
         return new ResponseEntity<GasPortion>(entity, HttpStatus.OK);

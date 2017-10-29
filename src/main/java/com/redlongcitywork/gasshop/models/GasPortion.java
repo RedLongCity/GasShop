@@ -19,8 +19,6 @@ public class GasPortion {
     
     private Fuel fuel;
     
-    private Set<Order> orders = new HashSet<Order>();
-
     public Integer getId() {
         return id;
     }
@@ -53,17 +51,9 @@ public class GasPortion {
         this.fuel = fuel;
     }
 
-    public Set<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
-    }
-
     @Override
     public String toString() {
-        return "GasPortion{" + "id=" + id + ", amount=" + amount + ", station=" + station + ", fuel=" + fuel + ", orders=" + orders + '}';
+        return "GasPortion{" + "id=" + id + ", amount=" + amount + ", station=" + station + ", fuel=" + fuel + '}';
     }
-    
+
 }

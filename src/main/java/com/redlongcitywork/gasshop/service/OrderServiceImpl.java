@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
         if (entity != null) {
             entity.setDate(order.getDate());
             entity.setStatus(order.getStatus());
-            entity.setGasPortionSet(order.getGasPortionSet());
+            entity.setGasPortionList(order.getGasPortionList());
             entity.setUser(order.getUser());
         }
     }

@@ -1,7 +1,7 @@
 package com.redlongcitywork.gasshop.models;
 
 import java.sql.Date;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +18,7 @@ public class Order {
     
     private String status;
     
-    private Set<GasPortion> gasPortionSet = new HashSet<GasPortion>(); 
+    private List<GasPortion> gasPortionSet; 
     
     private User user;
 
@@ -46,11 +46,11 @@ public class Order {
         this.status = status;
     }
 
-    public Set<GasPortion> getGasPortionSet() {
+    public List<GasPortion> getGasPortionList() {
         return gasPortionSet;
     }
 
-    public void setGasPortionSet(Set<GasPortion> gasPortionSet) {
+    public void setGasPortionList(List<GasPortion> gasPortionSet) {
         this.gasPortionSet = gasPortionSet;
     }
 

@@ -45,7 +45,6 @@ public class GasPortionServiceImpl implements GasPortionService{
             entity.setAmount(portion.getAmount());
             entity.setStation(portion.getStation());
             entity.setFuel(portion.getFuel());
-            entity.setOrders(portion.getOrders());
         }
     }
 

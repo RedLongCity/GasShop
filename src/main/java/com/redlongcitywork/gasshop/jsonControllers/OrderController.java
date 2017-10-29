@@ -59,7 +59,7 @@ public class OrderController {
         }
         entity.setDate(order.getDate());
         entity.setStatus(order.getStatus());
-        entity.setGasPortionSet(order.getGasPortionSet());
+        entity.setGasPortionList(order.getGasPortionList());
         entity.setUser(order.getUser());
         service.updateOrder(entity);
 
