@@ -138,13 +138,56 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public void delete(Order order) {
-        
+       
+            Connection connection = tx.getConnection();
+        try {
+            tx.begin();
+
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_DELETE_ORDER_PORTIONS);
+            statement.setInt(1, order.getId());
+            statement.executeUpdate();
+
+            statement = connection.prepareStatement(SQL_DELETE_ORDER);
+            statement.setInt(1, order.getId());
+            statement.executeUpdate();
+
+            tx.commit();
+
+        } catch (SQLException e) {
+            LOG.log(Level.WARNING, e.getMessage());
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                LOG.log(Level.WARNING, e.getMessage());
+
+            }
+        }
     }
 
     @Override
     public void update(Order order) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            PreparedStatement statement = tx.getConnection().
+                    prepareStatement(SQL_UPDATE_ORDER);
+            statement.setDate(1, order.getDate());
+            statement.setString(2, order.getStatus());
+            statement.setInt(3, order.getUser().getId());
+            statement.setInt(4, order.getId());
+            statement.executeUpdate();
+
+            statement = tx.getConnection().
+                    prepareStatement(SQL_DELETE_ORDER_PORTIONS);
+            statement.executeUpdate();
+
+            insertOrderPortions(order);
+        } catch (SQLException e) {
+            LOG.log(Level.WARNING, e.getMessage());
+
+        }
     }
+
 
     private void insertOrderPortions(Order order) {
         final int orderId = order.getId();
@@ -217,7 +260,9 @@ public class OrderDaoImpl implements OrderDao {
             PreparedStatement statement = connection.
                     prepareStatement("select LAST_INSERT_ID()");
             ResultSet set = statement.executeQuery();
-            id = set.getInt(1);
+            if(set.next()){
+                 id = set.getInt(1);
+            }
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
