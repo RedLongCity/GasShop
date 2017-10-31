@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author redlongcity
- * 29/10/2017
+ * @author redlongcity 
+ * 29/10/2017 
  * Controller for endpoints of UserProfile
  */
 @RestController
 @RequestMapping("/json")
 public class UserProfileController {
-    
+
     @Autowired
     private UserProfileService service;
 
