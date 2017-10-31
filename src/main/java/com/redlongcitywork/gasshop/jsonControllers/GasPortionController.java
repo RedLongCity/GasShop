@@ -1,7 +1,11 @@
 package com.redlongcitywork.gasshop.jsonControllers;
 
+import com.redlongcitywork.gasshop.models.Fuel;
 import com.redlongcitywork.gasshop.models.GasPortion;
+import com.redlongcitywork.gasshop.models.GasStation;
+import com.redlongcitywork.gasshop.service.FuelService;
 import com.redlongcitywork.gasshop.service.GasPortionService;
+import com.redlongcitywork.gasshop.service.GasStationService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,12 @@ public class GasPortionController {
 
     @Autowired
     private GasPortionService service;
+    
+    @Autowired
+    private FuelService fuelService;
+    
+    @Autowired
+    private GasStationService stationService;
 
     @RequestMapping(value = "/portion", method = RequestMethod.GET)
     public ResponseEntity<List<GasPortion>> getGasPortions() {
@@ -47,6 +57,13 @@ public class GasPortionController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+                
+        GasStation station = stationService.findById(entity.getStation().getId());
+        entity.setStation(station);
+
+        Fuel fuel = fuelService.findById(entity.getFuel().getId());
+        entity.setFuel(fuel);
+        
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -60,6 +77,13 @@ public class GasPortionController {
         entity.setAmount(portion.getAmount());
         entity.setStation(portion.getStation());
         entity.setFuel(portion.getFuel());
+        
+        GasStation station = stationService.findById(entity.getStation().getId());
+        entity.setStation(station);
+
+        Fuel fuel = fuelService.findById(entity.getFuel().getId());
+        entity.setFuel(fuel);
+        
         service.updateGasPortion(entity);
 
         return new ResponseEntity<GasPortion>(entity, HttpStatus.OK);

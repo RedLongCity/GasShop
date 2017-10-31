@@ -29,8 +29,8 @@ public class GasPortionServiceImpl implements GasPortionService{
     }
 
     @Override
-    public void saveGasPortion(GasPortion portion) {
-        dao.save(portion);
+    public GasPortion saveGasPortion(GasPortion portion) {
+       return dao.save(portion);
     }
 
     @Override

@@ -49,6 +49,7 @@ public class UserProfileController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        service.saveUserProfile(profile);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 

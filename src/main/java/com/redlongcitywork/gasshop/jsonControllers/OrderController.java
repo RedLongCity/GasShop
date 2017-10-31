@@ -1,7 +1,12 @@
 package com.redlongcitywork.gasshop.jsonControllers;
 
+import com.redlongcitywork.gasshop.models.GasPortion;
 import com.redlongcitywork.gasshop.models.Order;
+import com.redlongcitywork.gasshop.models.User;
+import com.redlongcitywork.gasshop.service.GasPortionService;
 import com.redlongcitywork.gasshop.service.OrderService;
+import com.redlongcitywork.gasshop.service.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +27,12 @@ public class OrderController {
 
     @Autowired
     private OrderService service;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private GasPortionService portionService;
 
     @RequestMapping(value = "/order", method = RequestMethod.GET)
     public ResponseEntity<List<Order>> getOrders() {
@@ -44,9 +55,23 @@ public class OrderController {
     @RequestMapping(value = "/order", method = RequestMethod.POST)
     public ResponseEntity<Void> createOrder(@RequestBody Order order) {
         Order entity = service.findById(order.getId());
+        List<GasPortion> list = new ArrayList<GasPortion>();
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        if(order.getGasPortionList()==null){
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        }
+        for(GasPortion portion:order.getGasPortionList()){
+            list.add(portionService.saveGasPortion(portion));
+        }
+        if(order.getUser()==null){
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        }
+        User user = userService.findById(order.getUser().getId());
+        entity.setGasPortionList(list);
+        entity.setUser(user);
+        service.saveOrder(order);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -54,6 +79,7 @@ public class OrderController {
     public ResponseEntity<Order> updateOrder(@PathVariable("id") Integer id,
             @RequestBody Order order) {
         Order entity = service.findById(id);
+        List<GasPortion> list = new ArrayList();
         if (entity == null) {
             return new ResponseEntity<Order>(HttpStatus.NOT_FOUND);
         }
@@ -61,6 +87,23 @@ public class OrderController {
         entity.setStatus(order.getStatus());
         entity.setGasPortionList(order.getGasPortionList());
         entity.setUser(order.getUser());
+        if(order.getGasPortionList()==null){
+            return new ResponseEntity<Order>(HttpStatus.BAD_REQUEST);
+        }
+        for(GasPortion portion: order.getGasPortionList()){
+            GasPortion portionEntity = portionService.findById(portion.getId());
+            if(portionEntity==null){
+                list.add(portionService.saveGasPortion(portion));
+            }else{
+                list.add(portion);
+            }
+        }
+        if(order.getUser()==null){
+            return new ResponseEntity<Order>(HttpStatus.BAD_REQUEST);
+        }
+        User user = userService.findById(order.getUser().getId());
+        entity.setGasPortionList(list);
+        entity.setUser(user);
         service.updateOrder(entity);
 
         return new ResponseEntity<Order>(entity, HttpStatus.OK);

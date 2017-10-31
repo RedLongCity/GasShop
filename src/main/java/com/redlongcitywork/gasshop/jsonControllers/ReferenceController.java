@@ -1,6 +1,10 @@
 package com.redlongcitywork.gasshop.jsonControllers;
 
+import com.redlongcitywork.gasshop.models.Fuel;
+import com.redlongcitywork.gasshop.models.GasStation;
 import com.redlongcitywork.gasshop.models.Reference;
+import com.redlongcitywork.gasshop.service.FuelService;
+import com.redlongcitywork.gasshop.service.GasStationService;
 import com.redlongcitywork.gasshop.service.ReferenceService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,12 @@ public class ReferenceController {
 
     @Autowired
     private ReferenceService service;
+
+    @Autowired
+    private GasStationService stationService;
+
+    @Autowired
+    private FuelService fuelService;
 
     @RequestMapping(value = "/reference", method = RequestMethod.GET)
     public ResponseEntity<List<Reference>> getReferences() {
@@ -47,6 +57,13 @@ public class ReferenceController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        GasStation station = stationService.findById(entity.getStation().getId());
+        entity.setStation(station);
+
+        Fuel fuel = fuelService.findById(entity.getFuel().getId());
+        entity.setFuel(fuel);
+
+        service.saveReference(reference);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -60,8 +77,14 @@ public class ReferenceController {
         entity.setCost(reference.getCost());
         entity.setStation(reference.getStation());
         entity.setFuel(reference.getFuel());
-        service.updateReference(entity);
+        
+        GasStation station = stationService.findById(entity.getStation().getId());
+        entity.setStation(station);
 
+        Fuel fuel = fuelService.findById(entity.getFuel().getId());
+        entity.setFuel(fuel);
+
+        service.updateReference(entity);
         return new ResponseEntity<Reference>(entity, HttpStatus.OK);
     }
 

@@ -49,6 +49,7 @@ public class FuelController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        service.saveFuel(fuel);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 

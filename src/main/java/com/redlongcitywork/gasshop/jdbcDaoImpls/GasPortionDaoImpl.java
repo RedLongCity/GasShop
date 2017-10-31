@@ -103,7 +103,7 @@ public class GasPortionDaoImpl implements GasPortionDao {
     }
 
     @Override
-    public void save(GasPortion portion) {
+    public GasPortion save(GasPortion portion) {
         Connection connection = tx.getConnection();
         
         try{
@@ -129,6 +129,7 @@ public class GasPortionDaoImpl implements GasPortionDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return portion;
     }
 
     @Override

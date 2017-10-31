@@ -50,6 +50,7 @@ public class GasStationController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        service.saveGasStation(station);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 

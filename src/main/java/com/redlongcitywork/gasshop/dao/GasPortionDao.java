@@ -13,7 +13,7 @@ public interface GasPortionDao {
 
     GasPortion findById(Integer id);
 
-    void save(GasPortion portion);
+    GasPortion save(GasPortion portion);
 
     void delete(GasPortion portion);
 

@@ -13,7 +13,7 @@ public interface GasPortionService {
 
     GasPortion findById(Integer id);
 
-    void saveGasPortion(GasPortion portion);
+    GasPortion saveGasPortion(GasPortion portion);
 
     void deleteGasPortion(GasPortion portion);
 

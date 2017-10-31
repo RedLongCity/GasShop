@@ -1,6 +1,8 @@
 package com.redlongcitywork.gasshop.jsonControllers;
 
 import com.redlongcitywork.gasshop.models.User;
+import com.redlongcitywork.gasshop.models.UserProfile;
+import com.redlongcitywork.gasshop.service.UserProfileService;
 import com.redlongcitywork.gasshop.service.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private UserProfileService profileService;
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public ResponseEntity<List<User>> getUsers() {
@@ -47,6 +52,12 @@ public class UserController {
         if (entity != null) {
             return new ResponseEntity<Void>(HttpStatus.CONFLICT);
         }
+        if (user.getProfile() == null) {
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        }
+        UserProfile profile = profileService.findById(user.getProfile().getId());
+        user.setProfile(profile);
+        service.saveUser(user);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -64,6 +75,14 @@ public class UserController {
         entity.setAddress(user.getAddress());
         entity.setPassword(user.getPassword());
         entity.setProfile(user.getProfile());
+        
+        if (user.getProfile() == null) {
+            return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+        }
+        
+        UserProfile profile = profileService.findById(user.getProfile().getId());
+        user.setProfile(profile);
+        service.saveUser(user);
         service.updateUser(entity);
 
         return new ResponseEntity<User>(entity, HttpStatus.OK);

@@ -80,7 +80,7 @@ public class GasPortionDaoImpl implements GasPortionDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void save(GasPortion portion) {
+    public GasPortion save(GasPortion portion) {
         template.update(SQL_INSERT_GAS_PORTION, 
                 portion.getAmount(),
                 portion.getStation().getId(), 
@@ -88,6 +88,7 @@ public class GasPortionDaoImpl implements GasPortionDao {
 
         portion.setId(template.
                 queryForObject("select LAST_INSERT_ID()", Integer.class));
+        return portion;
     }
 
     @Override
