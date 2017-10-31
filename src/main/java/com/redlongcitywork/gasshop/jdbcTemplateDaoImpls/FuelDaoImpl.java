@@ -5,9 +5,12 @@ import com.redlongcitywork.gasshop.dao.FuelDao;
 import com.redlongcitywork.gasshop.jdbcTemplateUtils.FuelRowMapper;
 import com.redlongcitywork.gasshop.models.Fuel;
 import java.util.List;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -16,14 +19,37 @@ import org.springframework.stereotype.Repository;
 @Repository("fuelDao")
 public class FuelDaoImpl implements FuelDao {
 
+    private static final Logger LOG = Logger.getLogger(FuelDaoImpl.class.getName());
+
     @Autowired
     private JdbcTemplate template;
+
+    private static final String SQL_SELECT_FUELS
+            = "select * from fuels";
+
+    private static final String SQL_SELECT_FUEL
+            = "select * from fuels where fuel_id = ?";
+
+    private static final String SQL_INSERT_FUEL
+            = "insert into fuels (fuel_name) values(?)";
+
+    private static final String SQL_DELETE_FUEL
+            = "delete from fuels where fuel_id = ?";
+
+    private static final String SQL_DELETE_FUEL_GAS_PORTIONS
+            = "delete from gas_portions where fuels_id = ?";
+
+    private static final String SQL_DELETE_FUEL_REFERENCES
+            = "delete from references where fuels_id = ?";
+
+    private static final String SQL_UPDATE_FUEL
+            = "update fuels set fuel_name = ?"
+            + " where fuel_id = ?";
 
     @Override
     public List<Fuel> findAll() {
         List<Fuel> list;
-        String query = "select * from fuels";
-        list = template.query(query, new FuelRowMapper());
+        list = template.query(SQL_SELECT_FUELS, new FuelRowMapper());
         checkNotNull(list);
         return list;
     }
@@ -31,34 +57,40 @@ public class FuelDaoImpl implements FuelDao {
     @Override
     public Fuel findById(Integer id) {
         checkNotNull(id);
-        List<Fuel> list;
-        String query = "select * from fuels where fuel_id=" + id;
-        list = template.query(query, new FuelRowMapper());
-        checkNotNull(list);
-        return list.get(0);
+        return template.queryForObject(SQL_SELECT_FUEL,
+                new FuelRowMapper(),
+                id);
     }
 
     @Override
-    public void save(Fuel fuel) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    public Fuel save(Fuel fuel) {
         checkNotNull(fuel);
-        String query = "insert into fuels (fuel_id, fuel_name)"
-                + " values(?, ?)";
-        template.update(query, new Object[]{fuel.getId(), fuel.getName()});
+        template.update(SQL_INSERT_FUEL,
+                fuel.getName());
+        fuel.setId(template.queryForObject("select last_insert_id()",
+                Integer.class));
+        return fuel;
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(Fuel fuel) {
         checkNotNull(fuel);
-        String query = "delete from fuels where fuel_id=" + fuel.getId();
-        template.update(query);
+        template.update(SQL_DELETE_FUEL_GAS_PORTIONS,
+                fuel.getId());
+        template.update(SQL_DELETE_FUEL_REFERENCES,
+                fuel.getId());
+        template.update(SQL_DELETE_FUEL,
+                fuel.getId());
     }
 
     @Override
     public void update(Fuel fuel) {
         checkNotNull(fuel);
-        String query = "update fuels set fuel_name = ?"+
-                " where fuel_id=?";
-        template.update(query, new Object[]{fuel.getName(),fuel.getId()});
+        template.update(SQL_UPDATE_FUEL,
+                fuel.getName(),
+                fuel.getId());
     }
 
 }

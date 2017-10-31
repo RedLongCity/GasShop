@@ -28,13 +28,32 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     @Autowired
     private Transaction tx;
 
+    private static final String SQL_SELECT_USER_PROFILES
+            = "select * from user_profiles";
+
+    private static final String SQL_SELECT_USER_PROFILE
+            = "select * from user_profiles where user_profiles_id= ?";
+
+    private static final String SQL_INSERT_USER_PROFILE
+            = "insert into user_profiles (user_profile_type)"
+            + " valuest(?)";
+
+    private static final String SQL_DELETE_USER_PROFILE
+            = "delete from user_profiles where user_profile_id = ?";
+
+    private static final String SQL_DELETE_USER_PROFILE_USERS
+            = "delete from users where user_profiles_user_profiles_id = ?";
+
+    private static final String SQL_UPDATE_USER_PROFILE
+            = "update user_profiles set user_profile_type = ?"
+            + " where user_profile_id = ?";
+
     @Override
     public List<UserProfile> findAll() {
         List<UserProfile> list = new LinkedList<UserProfile>();
         try {
-            String query = "select * from user_profiles";
             PreparedStatement statement = ConnectionProvider.getInstance().
-                    getConnection().prepareStatement(query);
+                    getConnection().prepareStatement(SQL_SELECT_USER_PROFILES);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 list.add(convert(set));
@@ -52,8 +71,8 @@ public class UserProfilleDaoImpl implements UserProfileDao {
         UserProfile profile = null;
         try {
             Connection connection = ConnectionProvider.getInstance().getConnection();
-            String query = "select * from user_profiles where user_profiles_id= ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_SELECT_USER_PROFILE);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
@@ -66,17 +85,19 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     }
 
     @Override
-    public void save(UserProfile profile) {
+    public UserProfile save(UserProfile profile) {
         Connection connection = tx.getConnection();
         try {
             tx.begin();
 
-            String query = "insert into user_profiles (user_profiles_id, user_profiles_type) values (?, ?)";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, profile.getId());
-            statement.setString(2, profile.getType());
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_INSERT_USER_PROFILE);
+            statement.setString(1, profile.getType());
             statement.executeUpdate();
 
+            statement = connection.prepareStatement("select last_insert_id");
+            ResultSet set = statement.executeQuery();
+            profile.setId(set.getInt(1));
             tx.commit();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
@@ -87,6 +108,7 @@ public class UserProfilleDaoImpl implements UserProfileDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return profile;
     }
 
     @Override
@@ -96,8 +118,13 @@ public class UserProfilleDaoImpl implements UserProfileDao {
         try {
             tx.begin();
 
-            String query = "delete user_profiles where user_profiles_id= ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_DELETE_USER_PROFILE_USERS);
+            statement.setInt(1, profile.getId());
+            statement.executeUpdate();
+
+            statement = connection.
+                    prepareStatement(SQL_DELETE_USER_PROFILE);
             statement.setInt(1, profile.getId());
             statement.executeUpdate();
 
@@ -115,12 +142,11 @@ public class UserProfilleDaoImpl implements UserProfileDao {
 
     @Override
     public void update(UserProfile profile) {
-        try{
-            String query = "update user_profiles set user_profiles_type= ?, where user_profiles_id= ?";
+        try {
             PreparedStatement statement = tx.getConnection().
-                    prepareStatement(query);
+                    prepareStatement(SQL_UPDATE_USER_PROFILE);
             statement.setString(1, profile.getType());
-            statement.setInt(2,profile.getId());
+            statement.setInt(2, profile.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());

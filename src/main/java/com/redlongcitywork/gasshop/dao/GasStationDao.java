@@ -14,7 +14,7 @@ public interface GasStationDao {
 
     GasStation findById(Integer id);
 
-    void save(GasStation station);
+    GasStation save(GasStation station);
 
     void delete(GasStation station);
 

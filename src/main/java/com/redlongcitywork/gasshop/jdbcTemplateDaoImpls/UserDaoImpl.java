@@ -75,7 +75,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void save(User user) {
+    public User save(User user) {
         template.update(SQL_INSERT_USER,
                 user.getFirstName(),
                 user.getLastName(),
@@ -87,6 +87,7 @@ public class UserDaoImpl implements UserDao {
 
         user.setId(template.queryForObject("select last_insert_id()",
                 Integer.class));
+        return user;
     }
 
     @Override

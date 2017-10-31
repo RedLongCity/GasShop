@@ -13,7 +13,7 @@ public interface ReferenceDao {
 
     Reference findById(Integer id);
 
-    void save(Reference reference);
+    Reference save(Reference reference);
 
     void delete(Reference reference);
 

@@ -108,7 +108,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public void save(Order order) {
+    public Order save(Order order) {
         Connection connection = tx.getConnection();
 
         try {
@@ -134,6 +134,7 @@ public class OrderDaoImpl implements OrderDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return order;
     }
 
     @Override

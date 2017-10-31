@@ -28,13 +28,35 @@ public class GasStationImpl implements GasStationDao {
 
     private static final Logger LOG = Logger.getLogger(GasStationImpl.class.getName());
 
+    private static final String SQL_SELECT_GAS_STATIONS
+            = "select * from gas_stations";
+
+    private static final String SQL_SELECT_GAS_STATION
+            = "select * from gas_stations where gas_station_id = ?";
+
+    private static final String SQL_INSERT_GAS_STATION
+            = "insert into gas_stations (gas_station_name)"
+            + " values(?)";
+
+    private static final String SQL_DELETE_GAS_STATION
+            = "delete from gas_stations where gas_station_id = ?";
+
+    private static final String SQL_DELETE_GAS_STATION_GAS_PORTIONS
+            = "delete from gas_portions where gas_stations_gas_station_id = ?";
+
+    private static final String SQL_DELETE_GAS_STATION_REFERENCES
+            = "delete from references where gas_stations_gas_station_id = ?";
+
+    private static final String SQL_UPDATE_GAS_STATION
+            = "update gas_station set gas_station_name = ?"
+            + " where gas_station_id = ?";
+
     @Override
     public List<GasStation> findAll() {
         List<GasStation> list = new LinkedList<GasStation>();
         try {
-            String query = "select * from gas_stations";
             PreparedStatement statement = ConnectionProvider.getInstance().
-                    getConnection().prepareStatement(query);
+                    getConnection().prepareStatement(SQL_SELECT_GAS_STATIONS);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 list.add(convert(set));
@@ -53,8 +75,8 @@ public class GasStationImpl implements GasStationDao {
         try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
-            String query = "select * from fuels where gas_station_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_SELECT_GAS_STATION);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
@@ -67,18 +89,21 @@ public class GasStationImpl implements GasStationDao {
     }
 
     @Override
-    public void save(GasStation station) {
+    public GasStation save(GasStation station) {
         Connection connection = tx.getConnection();
 
         try {
             tx.begin();
 
-            String query = "insert into gas_sations (gas_station_id, gas_station_name) values(?, ?)";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, station.getId());
-            statement.setString(2, station.getName());
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_INSERT_GAS_STATION);
+            statement.setString(1, station.getName());
 
             statement.executeUpdate();
+
+            statement = connection.prepareStatement("select last_insert_id()");
+            ResultSet set = statement.executeQuery();
+            station.setId(set.getInt(1));
             tx.commit();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
@@ -89,6 +114,7 @@ public class GasStationImpl implements GasStationDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return station;
     }
 
     @Override
@@ -98,11 +124,20 @@ public class GasStationImpl implements GasStationDao {
         try {
             tx.begin();
 
-            String query = "delete from gas_stations where gas_station_id= ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_DELETE_GAS_STATION_GAS_PORTIONS);
             statement.setInt(1, station.getId());
             statement.executeUpdate();
 
+            statement = connection.
+                    prepareStatement(SQL_DELETE_GAS_STATION_REFERENCES);
+            statement.setInt(1, station.getId());
+            statement.executeUpdate();
+
+            statement = connection.
+                    prepareStatement(SQL_DELETE_GAS_STATION);
+            statement.setInt(1, station.getId());
+            statement.executeUpdate();
             tx.commit();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
@@ -118,9 +153,8 @@ public class GasStationImpl implements GasStationDao {
     @Override
     public void update(GasStation station) {
         try {
-            String query = "update gas_stations set gas_station_name= ? where gas_station_id = ?";
             PreparedStatement statement = tx.getConnection().
-                    prepareStatement(query);
+                    prepareStatement(SQL_UPDATE_GAS_STATION);
             statement.setString(1, station.getName());
             statement.setInt(2, station.getId());
             statement.executeUpdate();

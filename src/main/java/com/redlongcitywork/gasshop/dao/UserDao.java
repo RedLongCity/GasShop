@@ -13,7 +13,7 @@ public interface UserDao {
 
     User findById(Integer id);
 
-    void save(User user);
+    User save(User user);
 
     void delete(User user);
 

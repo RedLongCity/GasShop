@@ -5,9 +5,12 @@ import com.redlongcitywork.gasshop.dao.UserProfileDao;
 import com.redlongcitywork.gasshop.jdbcTemplateUtils.UserProfileRowMapper;
 import com.redlongcitywork.gasshop.models.UserProfile;
 import java.util.List;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -16,14 +19,35 @@ import org.springframework.stereotype.Repository;
 @Repository("userProfileDao")
 public class UserProfileDaoImpl implements UserProfileDao {
 
+    private static final Logger LOG = Logger.getLogger(UserProfileDaoImpl.class.getName());
+
     @Autowired
     private JdbcTemplate template;
+
+    private static final String SQL_SELECT_USER_PROFILES
+            = "select * from user_profiles";
+
+    private static final String SQL_SELECT_USER_PROFILE
+            = "select * from user_profiles where user_profiles_id= ?";
+
+    private static final String SQL_INSERT_USER_PROFILE
+            = "insert into user_profiles (user_profile_type)"
+            + " valuest(?)";
+
+    private static final String SQL_DELETE_USER_PROFILE
+            = "delete from user_profiles where user_profile_id = ?";
+
+    private static final String SQL_DELETE_USER_PROFILE_USERS
+            = "delete from users where user_profiles_user_profiles_id = ?";
+
+    private static final String SQL_UPDATE_USER_PROFILE
+            = "update user_profiles set user_profile_type = ?"
+            + " where user_profile_id = ?";
 
     @Override
     public List<UserProfile> findAll() {
         List<UserProfile> list;
-        String query = "select * from user_profiles";
-        list = template.query(query, new UserProfileRowMapper());
+        list = template.query(SQL_SELECT_USER_PROFILES, new UserProfileRowMapper());
         checkNotNull(list);
         return list;
     }
@@ -31,34 +55,38 @@ public class UserProfileDaoImpl implements UserProfileDao {
     @Override
     public UserProfile findById(Integer id) {
         checkNotNull(id);
-        List<UserProfile> list;
-        String query = "select * from user_profiles where user_profiles_id=" + id;
-        list = template.query(query, new UserProfileRowMapper());
-        checkNotNull(list);
-        return list.get(0);
+        return template.queryForObject(SQL_SELECT_USER_PROFILE,
+                new UserProfileRowMapper(),
+                id);
     }
 
     @Override
-    public void save(UserProfile profile) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    public UserProfile save(UserProfile profile) {
         checkNotNull(profile);
-        String query = "insert into user_profiles (user_profiles_id, user_profile_type)"
-                + " valuest(?, ?)";
-        template.update(query, new Object[]{profile.getId(), profile.getType()});
+        template.update(SQL_INSERT_USER_PROFILE,
+                profile.getType());
+        profile.setId(template.queryForObject("select last_insert_id()",
+                Integer.class));
+        return profile;
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(UserProfile profile) {
         checkNotNull(profile);
-        String query = "delete from user_profiles where user_profile_id=" + profile.getId();
-        template.update(query);
+        template.update(SQL_DELETE_USER_PROFILE_USERS,
+                profile.getId());
+        template.update(SQL_DELETE_USER_PROFILE,
+                profile.getId());
     }
 
     @Override
     public void update(UserProfile profile) {
         checkNotNull(profile);
-        String query = "update user_profiles set user_profile_type = ?"
-                + " where user_profile_id = ?";
-        template.update(query, new Object[]{profile.getType(), profile.getId()});
+        template.update(SQL_UPDATE_USER_PROFILE,
+                profile.getType(),
+                profile.getId());
     }
 
 }

@@ -102,7 +102,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
     }
 
     @Override
-    public void save(Reference reference) {
+    public Reference save(Reference reference) {
         Connection connection = tx.getConnection();
         
         try{
@@ -128,6 +128,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return reference;
     }
 
     @Override

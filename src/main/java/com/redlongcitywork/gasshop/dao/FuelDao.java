@@ -14,7 +14,7 @@ public interface FuelDao {
     
     Fuel findById(Integer id);
     
-    void save(Fuel fuel);
+    Fuel save(Fuel fuel);
     
     void delete(Fuel fuel);
     

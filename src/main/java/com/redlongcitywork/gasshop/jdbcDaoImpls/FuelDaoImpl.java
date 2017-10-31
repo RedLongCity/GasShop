@@ -28,13 +28,34 @@ public class FuelDaoImpl implements FuelDao {
 
     private static final Logger LOG = Logger.getLogger(FuelDaoImpl.class.getName());
 
+    private static final String SQL_SELECT_FUELS
+            = "select * from fuels";
+
+    private static final String SQL_SELECT_FUEL
+            = "select * from fuels where fuel_id = ?";
+
+    private static final String SQL_INSERT_FUEL
+            = "insert into fuels (fuel_name) values(?)";
+
+    private static final String SQL_DELETE_FUEL
+            = "delete from fuels where fuel_id = ?";
+
+    private static final String SQL_DELETE_FUEL_GAS_PORTIONS
+            = "delete from gas_portions where fuels_id = ?";
+
+    private static final String SQL_DELETE_FUEL_REFERENCES
+            = "delete from references where fuels_id = ?";
+
+    private static final String SQL_UPDATE_FUEL
+            = "update fuels set fuel_name = ?"
+            + " where fuel_id = ?";
+
     @Override
     public List<Fuel> findAll() {
         List<Fuel> list = new LinkedList<Fuel>();
         try {
-            String query = "select * from fuels";
             PreparedStatement statement = ConnectionProvider.getInstance().
-                    getConnection().prepareStatement(query);
+                    getConnection().prepareStatement(SQL_SELECT_FUELS);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 list.add(convert(set));
@@ -52,8 +73,8 @@ public class FuelDaoImpl implements FuelDao {
         Fuel fuel = null;
         try {
             Connection connection = ConnectionProvider.getInstance().getConnection();
-            String query = "select * from fuels where fuel_id= ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_SELECT_FUEL);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
@@ -66,19 +87,21 @@ public class FuelDaoImpl implements FuelDao {
     }
 
     @Override
-    public void save(Fuel fuel) {
+    public Fuel save(Fuel fuel) {
         Connection connection = tx.getConnection();
 
         try {
             tx.begin();
 
-            String query = "insert into fuels (fuel_id, fuel_name) values (?, ?)";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, fuel.getId());
-            statement.setString(2, fuel.getName());
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_INSERT_FUEL);
+            statement.setString(1, fuel.getName());
 
             statement.executeUpdate();
 
+            statement = connection.prepareStatement("select last_insert_id()");
+            ResultSet set = statement.executeQuery();
+            fuel.setId(set.getInt(1));
             tx.commit();
 
         } catch (SQLException e) {
@@ -90,6 +113,7 @@ public class FuelDaoImpl implements FuelDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
+        return fuel;
     }
 
     @Override
@@ -99,8 +123,18 @@ public class FuelDaoImpl implements FuelDao {
         try {
             tx.begin();
 
-            String query = "delete from fuels where fuel_id = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
+            PreparedStatement statement = connection.
+                    prepareStatement(SQL_DELETE_FUEL_GAS_PORTIONS);
+            statement.setInt(1, fuel.getId());
+            statement.executeUpdate();
+            
+            statement = connection.
+                    prepareStatement(SQL_DELETE_FUEL_REFERENCES);
+            statement.setInt(1, fuel.getId());
+            statement.executeUpdate();
+            
+            statement = connection.
+                    prepareStatement(SQL_DELETE_FUEL);
             statement.setInt(1, fuel.getId());
             statement.executeUpdate();
 
@@ -119,10 +153,8 @@ public class FuelDaoImpl implements FuelDao {
     @Override
     public void update(Fuel fuel) {
         try {
-            String query = "update fuels set fuel_name = ? where fuel_id= ?";
-
             PreparedStatement statement = tx.getConnection().
-                    prepareStatement(query);
+                    prepareStatement(SQL_UPDATE_FUEL);
             statement.setString(1, fuel.getName());
             statement.setInt(2, fuel.getId());
             statement.executeUpdate();

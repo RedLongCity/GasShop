@@ -91,7 +91,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void save(Order order) {
+    public Order save(Order order) {
         template.update(SQL_INSERT_ORDER,
                 order.getDate(),
                 order.getStatus(),
@@ -100,6 +100,7 @@ public class OrderDaoImpl implements OrderDao {
         order.setId(template.queryForObject("select last_insert_id()",
                 Integer.class));
         this.insertPortions(order);
+        return order;
     }
 
     @Override

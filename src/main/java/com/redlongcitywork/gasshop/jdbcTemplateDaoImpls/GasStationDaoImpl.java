@@ -6,9 +6,12 @@ import com.redlongcitywork.gasshop.jdbcTemplateUtils.GasStationRowMapper;
 import com.redlongcitywork.gasshop.models.GasStation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -17,14 +20,38 @@ import org.springframework.stereotype.Repository;
 @Repository("gasStationDao")
 public class GasStationDaoImpl implements GasStationDao {
 
+    private static final Logger LOG = Logger.getLogger(GasStationDaoImpl.class.getName());
+
     @Autowired
     private JdbcTemplate template;
+
+    private static final String SQL_SELECT_GAS_STATIONS
+            = "select * from gas_stations";
+
+    private static final String SQL_SELECT_GAS_STATION
+            = "select * from gas_stations where gas_station_id = ?";
+
+    private static final String SQL_INSERT_GAS_STATION
+            = "insert into gas_stations (gas_station_name)"
+            + " values(?)";
+
+    private static final String SQL_DELETE_GAS_STATION
+            = "delete from gas_stations where gas_station_id = ?";
+
+    private static final String SQL_DELETE_GAS_STATION_GAS_PORTIONS
+            = "delete from gas_portions where gas_stations_gas_station_id = ?";
+
+    private static final String SQL_DELETE_GAS_STATION_REFERENCES
+            = "delete from references where gas_stations_gas_station_id = ?";
+
+    private static final String SQL_UPDATE_GAS_STATION
+            = "update gas_station set gas_station_name = ?"
+            + " where gas_station_id = ?";
 
     @Override
     public List<GasStation> findAll() {
         List<GasStation> list = new ArrayList<>();
-        String query = "select * from gas_stations";
-        list = template.query(query, new GasStationRowMapper());
+        list = template.query(SQL_SELECT_GAS_STATIONS, new GasStationRowMapper());
         checkNotNull(list);
         return list;
     }
@@ -32,35 +59,40 @@ public class GasStationDaoImpl implements GasStationDao {
     @Override
     public GasStation findById(Integer id) {
         checkNotNull(id);
-        List<GasStation> list = new ArrayList<>();
-        String query = "select * from gas_stations where gas_station_id=" + id;
-        list = template.query(query, new GasStationRowMapper());
-        checkNotNull(list);
-        return list.get(0);
+        return template.queryForObject(SQL_SELECT_GAS_STATION,
+                new GasStationRowMapper(),
+                id);
     }
 
     @Override
-    public void save(GasStation station) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
+    public GasStation save(GasStation station) {
         checkNotNull(station);
-        String query = "insert into gas_stations (gas_station_id, gas_station_name)"+
-                " values(?, ?)";
-        template.update(query,new Object[]{station.getId(),station.getName()});
+        template.update(SQL_INSERT_GAS_STATION,
+                station.getName());
+        station.setId(template.
+                queryForObject("select last_insert_id()", Integer.class));
+        return station;
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
     public void delete(GasStation station) {
         checkNotNull(station);
-        String query = "delete from gas_stations where gas_station_id="+
-                station.getId();
-        template.update(query);
+        template.update(SQL_DELETE_GAS_STATION_REFERENCES,
+                station.getId());
+        template.update(SQL_DELETE_GAS_STATION_GAS_PORTIONS,
+                station.getId());
+        template.update(SQL_DELETE_GAS_STATION,
+                station.getId());
     }
 
     @Override
     public void update(GasStation station) {
         checkNotNull(station);
-        String query = "update gas_station set gas_station_name = ?"+
-                " where gas_station_id = ?";
-        template.update(query,new Object[]{station.getName(),station.getId()});
+        template.update(SQL_UPDATE_GAS_STATION,
+                station.getName(),
+                station.getId());
     }
 
 }

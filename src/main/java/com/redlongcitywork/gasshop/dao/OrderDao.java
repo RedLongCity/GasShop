@@ -13,7 +13,7 @@ public interface OrderDao {
 
     Order findById(Integer id);
 
-    void save(Order order);
+    Order save(Order order);
 
     void delete(Order order);
 

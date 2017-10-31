@@ -13,7 +13,7 @@ public interface UserProfileDao {
 
     UserProfile findById(Integer id);
 
-    void save(UserProfile profile);
+    UserProfile save(UserProfile profile);
 
     void delete(UserProfile profile);
 

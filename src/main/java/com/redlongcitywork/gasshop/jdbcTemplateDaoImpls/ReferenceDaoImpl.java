@@ -80,7 +80,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
-    public void save(Reference reference) {
+    public Reference save(Reference reference) {
         template.update(SQL_INSERT_REFERENCE,
                 reference.getCost(),
                 reference.getStation().getId(),
@@ -88,6 +88,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
 
         reference.setId(template.
                 queryForObject("select LAST_INSERT_ID()", Integer.class));
+        return reference;
     }
 
     @Override
