@@ -1,8 +1,5 @@
 package com.redlongcitywork.gasshop.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  *
  * @author redlongcity

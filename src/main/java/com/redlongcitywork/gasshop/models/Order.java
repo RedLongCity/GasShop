@@ -2,24 +2,21 @@ package com.redlongcitywork.gasshop.models;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
- * @author redlongcity
- * 28/10/2017
- * model keeps info about order
+ * @author redlongcity 28/10/2017 model keeps info about order
  */
 public class Order {
-    
+
     private Integer id;
-    
+
     private Date date;
-    
+
     private String status;
-    
-    private List<GasPortion> gasPortionSet; 
-    
+
+    private List<GasPortion> gasPortionSet;
+
     private User user;
 
     public Integer getId() {
@@ -66,5 +63,5 @@ public class Order {
     public String toString() {
         return "Order{" + "id=" + id + ", date=" + date + ", status=" + status + ", gasPortionSet=" + gasPortionSet + ", user=" + user + '}';
     }
-    
+
 }

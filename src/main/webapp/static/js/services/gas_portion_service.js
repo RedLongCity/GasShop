@@ -1,4 +1,4 @@
-App.factory('Gas_Portion', ['$http', '$q', 'UrlService', function ($http, $q, UrlService) {
+App.factory('Portion', ['$http', '$q', 'UrlService', function ($http, $q, UrlService) {
 
         var SERVER_URL_JSON = UrlService.getServerUrlJson();
 
@@ -56,7 +56,7 @@ App.factory('Gas_Portion', ['$http', '$q', 'UrlService', function ($http, $q, Ur
                         );
             },
 
-            deleteGas_Portion: function (id) {
+            deletePortion: function (id) {
                 return $http.delete(SERVER_URL_JSON + "/portion/" + id)
                         .then(
                                 function (response) {
@@ -69,7 +69,7 @@ App.factory('Gas_Portion', ['$http', '$q', 'UrlService', function ($http, $q, Ur
                         );
             },
 
-            deleteAll: function () {
+            deleteAllPortions: function () {
                 return $http.delete(SERVER_URL_JSON + '/portion')
                         .then(
                                 function (response) {

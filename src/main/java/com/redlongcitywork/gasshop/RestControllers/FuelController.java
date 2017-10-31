@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jsonControllers;
+package com.redlongcitywork.gasshop.RestControllers;
 
 import com.redlongcitywork.gasshop.models.Fuel;
 import com.redlongcitywork.gasshop.service.FuelService;

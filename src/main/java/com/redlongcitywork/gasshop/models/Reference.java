@@ -2,18 +2,16 @@ package com.redlongcitywork.gasshop.models;
 
 /**
  *
- * @author redlongcity
- * 28/10/2017
- * model like unit of information
+ * @author redlongcity 28/10/2017 model like unit of information
  */
 public class Reference {
-    
+
     private Integer id;
-    
+
     private float cost;
-    
+
     private GasStation station;
-    
+
     private Fuel fuel;
 
     public Integer getId() {
@@ -52,5 +50,5 @@ public class Reference {
     public String toString() {
         return "Reference{" + "id=" + id + ", cost=" + cost + ", station=" + station + ", fuel=" + fuel + '}';
     }
-    
+
 }
