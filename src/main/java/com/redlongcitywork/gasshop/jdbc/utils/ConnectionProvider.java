@@ -16,8 +16,6 @@ import org.springframework.core.env.Environment;
  * @author redlongity 
  * 28/10/2017
  */
-@Configuration
-@ComponentScan("com.redlongcitywork.gasshop")
 @PropertySource("classpath:application.properties")
 public class ConnectionProvider {
 

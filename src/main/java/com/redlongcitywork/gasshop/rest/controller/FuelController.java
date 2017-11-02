@@ -24,6 +24,26 @@ public class FuelController {
 
     @Autowired
     private FuelService service;
+    
+    @RequestMapping(value="/do",method=RequestMethod.GET)
+    public ResponseEntity<Fuel> doSomething(){
+        Fuel fuel = new Fuel();
+        fuel.setName("А80");
+        service.saveFuel(fuel);
+        
+        fuel.setName("A76");
+        service.updateFuel(fuel);
+        
+        Fuel fuel2 = new Fuel();
+        fuel2.setName("ДТ");
+
+        List<Fuel> list = service.findAll();
+        
+        service.deleteFuel(fuel);
+        
+        return new ResponseEntity<Fuel>(fuel2,HttpStatus.OK);
+        
+    }
 
     @RequestMapping(value = "/fuel", method = RequestMethod.GET)
     public ResponseEntity<List<Fuel>> getFuels() {

@@ -1,10 +1,10 @@
-package com.redlongcitywork.gasshop.jdbc.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.impl;
 
-import com.redlongcitywork.gasshop.dao.UserProfileDao;
+import com.redlongcitywork.gasshop.dao.FuelDao;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.jdbc.utils.ConnectionProvider;
 import com.redlongcitywork.gasshop.jdbc.utils.Transaction;
-import com.redlongcitywork.gasshop.models.UserProfile;
+import com.redlongcitywork.gasshop.models.Fuel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,40 +20,42 @@ import org.springframework.stereotype.Repository;
  *
  * @author redlongcity 28/10/2017
  */
-@Repository("userProfileDao")
-public class UserProfilleDaoImpl implements UserProfileDao {
-
-    private static final Logger LOG = Logger.getLogger(UserProfilleDaoImpl.class.getName());
+//@Repository("fuelDao")
+public class FuelDaoJdbcImpl implements FuelDao {
 
     @Autowired
     private Transaction tx;
 
-    private static final String SQL_SELECT_USER_PROFILES
-            = "select * from user_profiles";
+    private static final Logger LOG = Logger.getLogger(FuelDaoJdbcImpl.class.getName());
 
-    private static final String SQL_SELECT_USER_PROFILE
-            = "select * from user_profiles where user_profiles_id= ?";
+    private static final String SQL_SELECT_FUELS
+            = "select * from fuels";
 
-    private static final String SQL_INSERT_USER_PROFILE
-            = "insert into user_profiles (user_profile_type)"
-            + " valuest(?)";
+    private static final String SQL_SELECT_FUEL
+            = "select * from fuels where fuel_id = ?";
 
-    private static final String SQL_DELETE_USER_PROFILE
-            = "delete from user_profiles where user_profile_id = ?";
+    private static final String SQL_INSERT_FUEL
+            = "insert into fuels (fuel_name) values(?)";
 
-    private static final String SQL_DELETE_USER_PROFILE_USERS
-            = "delete from users where user_profiles_user_profiles_id = ?";
+    private static final String SQL_DELETE_FUEL
+            = "delete from fuels where fuel_id = ?";
 
-    private static final String SQL_UPDATE_USER_PROFILE
-            = "update user_profiles set user_profile_type = ?"
-            + " where user_profile_id = ?";
+    private static final String SQL_DELETE_FUEL_GAS_PORTIONS
+            = "delete from gas_portions where fuels_id = ?";
+
+    private static final String SQL_DELETE_FUEL_REFERENCES
+            = "delete from references where fuels_id = ?";
+
+    private static final String SQL_UPDATE_FUEL
+            = "update fuels set fuel_name = ?"
+            + " where fuel_id = ?";
 
     @Override
-    public List<UserProfile> findAll() {
-        List<UserProfile> list = new LinkedList<UserProfile>();
+    public List<Fuel> findAll() {
+        List<Fuel> list = new LinkedList<Fuel>();
         try {
             PreparedStatement statement = ConnectionProvider.getInstance().
-                    getConnection().prepareStatement(SQL_SELECT_USER_PROFILES);
+                    getConnection().prepareStatement(SQL_SELECT_FUELS);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 list.add(convert(set));
@@ -65,40 +67,43 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     }
 
     @Override
-    public UserProfile findById(Integer id) {
+    public Fuel findById(Integer id) {
         checkNotNull(id);
 
-        UserProfile profile = null;
+        Fuel fuel = null;
         try {
             Connection connection = ConnectionProvider.getInstance().getConnection();
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_SELECT_USER_PROFILE);
+                    prepareStatement(SQL_SELECT_FUEL);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
-                profile = convert(set);
+                fuel = convert(set);
             }
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
-        return profile;
+        return fuel;
     }
 
     @Override
-    public UserProfile save(UserProfile profile) {
+    public Fuel save(Fuel fuel) {
         Connection connection = tx.getConnection();
+
         try {
             tx.begin();
 
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_INSERT_USER_PROFILE);
-            statement.setString(1, profile.getType());
+                    prepareStatement(SQL_INSERT_FUEL);
+            statement.setString(1, fuel.getName());
+
             statement.executeUpdate();
 
-            statement = connection.prepareStatement("select last_insert_id");
+            statement = connection.prepareStatement("select LAST_INSERT_ID()");
             ResultSet set = statement.executeQuery();
-            profile.setId(set.getInt(1));
+            fuel.setId(set.getInt(1));
             tx.commit();
+
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         } finally {
@@ -108,24 +113,29 @@ public class UserProfilleDaoImpl implements UserProfileDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
-        return profile;
+        return fuel;
     }
 
     @Override
-    public void delete(UserProfile profile) {
+    public void delete(Fuel fuel) {
         Connection connection = tx.getConnection();
 
         try {
             tx.begin();
 
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_DELETE_USER_PROFILE_USERS);
-            statement.setInt(1, profile.getId());
+                    prepareStatement(SQL_DELETE_FUEL_GAS_PORTIONS);
+            statement.setInt(1, fuel.getId());
             statement.executeUpdate();
-
+            
             statement = connection.
-                    prepareStatement(SQL_DELETE_USER_PROFILE);
-            statement.setInt(1, profile.getId());
+                    prepareStatement(SQL_DELETE_FUEL_REFERENCES);
+            statement.setInt(1, fuel.getId());
+            statement.executeUpdate();
+            
+            statement = connection.
+                    prepareStatement(SQL_DELETE_FUEL);
+            statement.setInt(1, fuel.getId());
             statement.executeUpdate();
 
             tx.commit();
@@ -141,27 +151,28 @@ public class UserProfilleDaoImpl implements UserProfileDao {
     }
 
     @Override
-    public void update(UserProfile profile) {
+    public void update(Fuel fuel) {
         try {
             PreparedStatement statement = tx.getConnection().
-                    prepareStatement(SQL_UPDATE_USER_PROFILE);
-            statement.setString(1, profile.getType());
-            statement.setInt(2, profile.getId());
+                    prepareStatement(SQL_UPDATE_FUEL);
+            statement.setString(1, fuel.getName());
+            statement.setInt(2, fuel.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
     }
 
-    private UserProfile convert(ResultSet set) {
-        UserProfile profile = new UserProfile();
+    private Fuel convert(ResultSet resultSet) {
+        Fuel fuel = new Fuel();
+
         try {
-            profile.setId(set.getInt("user_profiles_id"));
-            profile.setType(set.getString("user_profiles_type"));
+            fuel.setId(resultSet.getInt("fuel_id"));
+            fuel.setName(resultSet.getString("fuel_name"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
-        return profile;
+        return fuel;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.UserProfileDao;
@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 29/10/2017
  */
 @Repository("userProfileDao")
-public class UserProfileDaoImpl implements UserProfileDao {
+public class UserProfileDaoJdbcTemplateImpl implements UserProfileDao {
 
-    private static final Logger LOG = Logger.getLogger(UserProfileDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserProfileDaoJdbcTemplateImpl.class.getName());
 
     @Autowired
     private JdbcTemplate template;
@@ -66,7 +66,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
         checkNotNull(profile);
         template.update(SQL_INSERT_USER_PROFILE,
                 profile.getType());
-        profile.setId(template.queryForObject("select last_insert_id()",
+        profile.setId(template.queryForObject("select LAST_INSERT_ID()",
                 Integer.class));
         return profile;
     }

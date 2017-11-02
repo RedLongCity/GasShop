@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.GasPortionDao;
@@ -20,17 +20,16 @@ import org.springframework.stereotype.Repository;
 
 /**
  *
- * @author redlongcity
- * 30/10/2017
+ * @author redlongcity 30/10/2017
  */
-@Repository("gasPortionDao")
-public class GasPortionDaoImpl implements GasPortionDao {
+//@Repository("gasPortionDao")
+public class GasPortionDaoJdbcImpl implements GasPortionDao {
 
-    private static final Logger LOG = Logger.getLogger(GasPortionDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(GasPortionDaoJdbcImpl.class.getName());
 
     @Autowired
     Transaction tx;
-    
+
     private static final String SQL_SELECT_ALL_GAS_PORTIONS
             = "select * from gas_portions";
 
@@ -65,11 +64,11 @@ public class GasPortionDaoImpl implements GasPortionDao {
             PreparedStatement statement = ConnectionProvider.getInstance().
                     getConnection().prepareStatement(SQL_SELECT_ALL_GAS_PORTIONS);
             ResultSet set = statement.executeQuery();
-            while(set.next()){
+            while (set.next()) {
                 list.add(convert(set));
             }
-            
-            for(GasPortion portion:list){
+
+            for (GasPortion portion : list) {
                 portion.setStation(findStationForGasPortion(portion));
                 portion.setFuel(findFuelForGasPortion(portion));
             }
@@ -82,21 +81,21 @@ public class GasPortionDaoImpl implements GasPortionDao {
     @Override
     public GasPortion findById(Integer id) {
         checkNotNull(id);
-        
+
         GasPortion portion = null;
-        try{
+        try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
             PreparedStatement statement = connection.
                     prepareStatement(SQL_SELECT_GAS_PORTION);
-            statement.setInt(1,id);
+            statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
-            if(set.next()){
+            if (set.next()) {
                 portion = convert(set);
             }
             portion.setStation(findStationForGasPortion(portion));
             portion.setFuel(findFuelForGasPortion(portion));
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
         return portion;
@@ -105,20 +104,20 @@ public class GasPortionDaoImpl implements GasPortionDao {
     @Override
     public GasPortion save(GasPortion portion) {
         Connection connection = tx.getConnection();
-        
-        try{
+
+        try {
             tx.begin();
-            
+
             PreparedStatement statement = connection.
                     prepareStatement(SQL_INSERT_GAS_PORTION);
             statement.setInt(1, portion.getAmount());
             statement.setInt(2, portion.getStation().getId());
             statement.setInt(3, portion.getFuel().getId());
             statement.setInt(4, portion.getId());
-            
+
             statement.executeUpdate();
             tx.commit();
-            
+
             portion.setId(getGasPortionId());
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
@@ -135,16 +134,16 @@ public class GasPortionDaoImpl implements GasPortionDao {
     @Override
     public void delete(GasPortion portion) {
         Connection connection = tx.getConnection();
-        try{
+        try {
             tx.begin();
-            
+
             PreparedStatement statement = connection.
                     prepareStatement(SQL_DELETE_GAS_PORTION);
             statement.setInt(1, portion.getId());
             statement.executeUpdate();
-            
+
             tx.commit();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         } finally {
             try {
@@ -157,29 +156,29 @@ public class GasPortionDaoImpl implements GasPortionDao {
 
     @Override
     public void update(GasPortion portion) {
-        try{
+        try {
             PreparedStatement statement = tx.getConnection().
                     prepareStatement(SQL_UPDATE_GAS_PORTION);
-            statement.setInt(1,portion.getAmount());
-            statement.setInt(2,portion.getStation().getId());
-            statement.setInt(3,portion.getFuel().getId());
-            statement.setInt(4,portion.getId());
-            
+            statement.setInt(1, portion.getAmount());
+            statement.setInt(2, portion.getStation().getId());
+            statement.setInt(3, portion.getFuel().getId());
+            statement.setInt(4, portion.getId());
+
             statement.executeUpdate();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
     }
-    
-    private Integer getGasPortionId(){
+
+    private Integer getGasPortionId() {
         Integer id = null;
-        try{
+        try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
             PreparedStatement statement = connection.
                     prepareStatement("select LAST_INSERT_ID()");
             ResultSet set = statement.executeQuery();
-            if(set.next()){
+            if (set.next()) {
                 id = set.getInt(1);
             }
         } catch (SQLException e) {
@@ -188,38 +187,38 @@ public class GasPortionDaoImpl implements GasPortionDao {
         return id;
     }
 
-    private GasStation findStationForGasPortion(GasPortion portion){
+    private GasStation findStationForGasPortion(GasPortion portion) {
         checkNotNull(portion);
-        
+
         GasStation station = null;
-        try{
+        try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
             PreparedStatement statement = connection.
                     prepareStatement(SQL_SELECT_GAS_STATION_BY_GAS_PORTION_ID);
-            statement.setInt(1,portion.getId());
+            statement.setInt(1, portion.getId());
             ResultSet set = statement.executeQuery();
-            if(set.next()){
+            if (set.next()) {
                 station = convertStation(set);
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
         return station;
     }
-    
-    private Fuel findFuelForGasPortion(GasPortion portion){
+
+    private Fuel findFuelForGasPortion(GasPortion portion) {
         checkNotNull(portion);
-        
+
         Fuel fuel = null;
-        try{
+        try {
             Connection connection = ConnectionProvider.getInstance().
                     getConnection();
             PreparedStatement statement = connection.
                     prepareStatement(SQL_SELECT_FUEL_BY_GAS_PORTION_ID);
-            statement.setInt(1,portion.getId());
+            statement.setInt(1, portion.getId());
             ResultSet set = statement.executeQuery();
-            if(set.next()){
+            if (set.next()) {
                 fuel = convertFuel(set);
             }
         } catch (SQLException e) {
@@ -227,7 +226,7 @@ public class GasPortionDaoImpl implements GasPortionDao {
         }
         return fuel;
     }
-    
+
     private GasPortion convert(ResultSet set) {
         GasPortion portion = new GasPortion();
 
@@ -239,22 +238,22 @@ public class GasPortionDaoImpl implements GasPortionDao {
         }
         return portion;
     }
-    
-    private GasStation convertStation(ResultSet resultSet){
+
+    private GasStation convertStation(ResultSet resultSet) {
         GasStation station = new GasStation();
-        
-        try{
+
+        try {
             station.setId(resultSet.getInt("gas_station_id"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
         return station;
     }
-    
-    private Fuel convertFuel(ResultSet resultSet){
+
+    private Fuel convertFuel(ResultSet resultSet) {
         Fuel fuel = new Fuel();
-        
-        try{
+
+        try {
             fuel.setId(resultSet.getInt("fuel_id"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());

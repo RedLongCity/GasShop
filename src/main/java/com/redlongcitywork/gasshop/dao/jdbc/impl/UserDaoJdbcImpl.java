@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.UserDao;
@@ -15,15 +15,17 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author redlongcity
  * 30/10/2017
  */
-public class UserDaoImpl implements UserDao {
+//@Repository("userDao")
+public class UserDaoJdbcImpl implements UserDao {
 
-    private static final Logger LOG = Logger.getLogger(UserDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserDaoJdbcImpl.class.getName());
 
     @Autowired
     Transaction tx;

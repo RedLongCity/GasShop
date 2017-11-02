@@ -2,6 +2,8 @@
 
 App.controller('ReferenceController', ['$scope', 'Reference', function ($scope, Reference) {
         var self = this;
+        self.cost;
+        self.averagecost;
         self.references = [];
         self.reference = {id: null, cost: '', station: null, fuel: null};
 
@@ -68,6 +70,41 @@ App.controller('ReferenceController', ['$scope', 'Reference', function ($scope, 
                             }
                     );
         };
+
+        self.getCost = function (fuel_id, station_id) {
+            Reference.getCost(fuel_id, station_id).then(
+                    function (d) {
+                        self.cost = d;
+                    },
+                    function (errResponse) {
+                        console.error('Error while fetching cost');
+                    }
+            );
+        };
+
+        self.getAverageCost = function (fuel_id) {
+            Reference.getAverageCost(fuel_id).then(
+                    function (d) {
+                        self.averagecost = d;
+                    },
+                    function (errResponse) {
+                        console.error('Error while fetching average cost');
+                    }
+            );
+        };
+
+        self.getReferencesByFuel = function (id) {
+            Reference.getReferencesByFuel(id)
+                    .then(
+                            function (d) {
+                                self.references = d;
+                            },
+                            function (errResponse) {
+                                console.error('Error while fetching references');
+                            }
+                    );
+        };
+
         self.getAllReferences();
     }]);
 

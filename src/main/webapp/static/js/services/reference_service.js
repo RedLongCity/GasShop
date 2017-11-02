@@ -80,8 +80,48 @@ App.factory('Reference', ['$http', '$q', 'UrlService', function ($http, $q, UrlS
                                     return $q.reject(errResponse);
                                 }
                         );
-            }
+            },
 
+            getCost: function (fuel_id, station_id) {
+                return $http.get(SERVER_URL_JSON + '/cost?' +
+                        'fuel=' + fuel_id +
+                        'station=' + station_id)
+                        .then(
+                                function (response) {
+                                    return response.data;
+                                },
+                                function (errResponse) {
+                                    console.error('Error while getting cost');
+                                    return $q.reject(errResponse);
+                                }
+                        );
+            },
+
+            getAverageCost: function (id) {
+                return $http.get(SERVER_URL_JSON + '/averagecost/' + id)
+                        .then(
+                                function (response) {
+                                    return response.data;
+                                },
+                                function (errResponse) {
+                                    console.error('Error while getting average cost');
+                                    return $q.reject(errResponse);
+                                }
+                        );
+            },
+
+            getReferencesByFuel: function (id) {
+                return $http.get(SERVER_URL_JSON + '/referencebyfuel/' + id)
+                        .then(
+                                function (response) {
+                                    return response.data;
+                                },
+                                function (errResponse) {
+                                    console.error('Error while getting references');
+                                    return $q.reject(errResponse);
+                                }
+                        );
+            }
         };
 
     }]);

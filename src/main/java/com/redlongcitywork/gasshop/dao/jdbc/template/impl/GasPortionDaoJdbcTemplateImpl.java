@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
 import com.redlongcitywork.gasshop.dao.GasPortionDao;
 import com.redlongcitywork.gasshop.jdbc.template.utils.FuelRowMapper;
@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 30/10/2017
  */
 @Repository("gasPortionDao")
-public class GasPortionDaoImpl implements GasPortionDao {
+public class GasPortionDaoJdbcTemplateImpl implements GasPortionDao {
 
-    private static final Logger LOG = Logger.getLogger(com.redlongcitywork.gasshop.jdbc.dao.impl.GasPortionDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(com.redlongcitywork.gasshop.dao.jdbc.impl.GasPortionDaoJdbcImpl.class.getName());
 
     @Autowired
     private JdbcTemplate template;

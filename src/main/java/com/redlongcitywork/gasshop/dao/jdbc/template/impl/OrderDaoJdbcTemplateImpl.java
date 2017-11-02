@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.OrderDao;
@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 31/10/2017
  */
 @Repository("orderDao")
-public class OrderDaoImpl implements OrderDao {
+public class OrderDaoJdbcTemplateImpl implements OrderDao {
 
-    private static final Logger LOG = Logger.getLogger(OrderDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(OrderDaoJdbcTemplateImpl.class.getName());
 
     @Autowired
     JdbcTemplate template;
@@ -97,7 +97,7 @@ public class OrderDaoImpl implements OrderDao {
                 order.getStatus(),
                 order.getUser().getId());
 
-        order.setId(template.queryForObject("select last_insert_id()",
+        order.setId(template.queryForObject("select LAST_INSERT_ID()",
                 Integer.class));
         this.insertPortions(order);
         return order;

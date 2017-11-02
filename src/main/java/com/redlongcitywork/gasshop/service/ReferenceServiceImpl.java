@@ -1,6 +1,8 @@
 package com.redlongcitywork.gasshop.service;
 
 import com.redlongcitywork.gasshop.dao.ReferenceDao;
+import com.redlongcitywork.gasshop.models.Fuel;
+import com.redlongcitywork.gasshop.models.GasStation;
 import com.redlongcitywork.gasshop.models.Reference;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +10,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author redlongcity
- * 29/10/2017
+ * @author redlongcity 29/10/2017
  */
 @Service("referenceService")
 public class ReferenceServiceImpl implements ReferenceService {
@@ -20,6 +21,11 @@ public class ReferenceServiceImpl implements ReferenceService {
     @Override
     public List<Reference> findAll() {
         return dao.findAll();
+    }
+
+    @Override
+    public List<Reference> findByFuel(Fuel fuel) {
+        return dao.findByFuel(fuel);
     }
 
     @Override
@@ -45,6 +51,16 @@ public class ReferenceServiceImpl implements ReferenceService {
             entity.setStation(reference.getStation());
             entity.setFuel(reference.getFuel());
         }
+    }
+
+    @Override
+    public Float getCost(Fuel fuel, GasStation station) {
+        return dao.getCost(fuel, station);
+    }
+
+    @Override
+    public Float getAverageCost(Fuel fuel) {
+        return dao.getAverageCost(fuel);
     }
 
     @Override

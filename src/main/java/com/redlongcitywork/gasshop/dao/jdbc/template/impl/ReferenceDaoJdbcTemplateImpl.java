@@ -1,5 +1,6 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.ReferenceDao;
 import com.redlongcitywork.gasshop.jdbc.template.utils.FuelRowMapper;
 import com.redlongcitywork.gasshop.jdbc.template.utils.ReferenceRowMapper;
@@ -22,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 30/10/2017
  */
 @Repository("referenceDao")
-public class ReferenceDaoImpl implements ReferenceDao {
+public class ReferenceDaoJdbcTemplateImpl implements ReferenceDao {
 
-    private static final Logger LOG = Logger.getLogger(ReferenceDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(ReferenceDaoJdbcTemplateImpl.class.getName());
 
     @Autowired
     private JdbcTemplate template;
@@ -56,6 +57,16 @@ public class ReferenceDaoImpl implements ReferenceDao {
             = "select f.* from fuels f inner join references ref"
             + " on ref.fuels_id = f.fuel_id where ref.reference_id = ?";
 
+    private static final String SQL_SELECT_COST_FOR_FUEL_AND_STATION
+            = "select cost from references where fuels_id = ?"
+            + "and gas_stations_gas_station_id = ?";
+
+    private static final String SQL_SELECT_AVERAGE_COST
+            = "select AVG(cost) from references where fuels_id = ?";
+
+    private static final String SQL_SELECT_REFERENCES_BY_FUEL_ID
+            = "select * from references where fuels_id = ?";
+
     @Override
     public List<Reference> findAll() {
         List<Reference> list = new ArrayList();
@@ -70,7 +81,24 @@ public class ReferenceDaoImpl implements ReferenceDao {
     }
 
     @Override
+    public List<Reference> findByFuel(Fuel fuel) {
+        checkNotNull(fuel);
+
+        List<Reference> list = new ArrayList<Reference>();
+        list = template.query(SQL_SELECT_REFERENCES_BY_FUEL_ID,
+                new ReferenceRowMapper(),
+                fuel.getId());
+
+        for (Reference reference : list) {
+            reference.setStation(findStationForReference(reference));
+            reference.setFuel(findFuelForReference(reference));
+        }
+        return list;
+    }
+
+    @Override
     public Reference findById(Integer id) {
+        checkNotNull(id);
         Reference reference = template.queryForObject(SQL_SELECT_REFERENCE,
                 new ReferenceRowMapper(), id);
         reference.setStation(findStationForReference(reference));
@@ -93,6 +121,7 @@ public class ReferenceDaoImpl implements ReferenceDao {
 
     @Override
     public void delete(Reference reference) {
+        checkNotNull(reference);
         template.update(SQL_DELETE_REFERENCE, reference.getId());
     }
 
@@ -104,6 +133,24 @@ public class ReferenceDaoImpl implements ReferenceDao {
                 reference.getStation().getId(),
                 reference.getFuel().getId(),
                 reference.getId());
+    }
+
+    @Override
+    public Float getCost(Fuel fuel, GasStation station) {
+        checkNotNull(fuel);
+        checkNotNull(station);
+        return template.queryForObject(SQL_SELECT_COST_FOR_FUEL_AND_STATION,
+                Float.class,
+                fuel.getId(),
+                station.getId());
+    }
+
+    @Override
+    public Float getAverageCost(Fuel fuel) {
+        checkNotNull(fuel);
+        return template.queryForObject(SQL_SELECT_AVERAGE_COST,
+                Float.class,
+                fuel.getId());
     }
 
     private GasStation findStationForReference(Reference reference) {

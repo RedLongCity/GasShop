@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.OrderDao;
@@ -22,10 +22,10 @@ import org.springframework.stereotype.Repository;
  *
  * @author redlongcity 29/10/2017
  */
-@Repository("orderDao")
-public class OrderDaoImpl implements OrderDao {
+//@Repository("orderDao")
+public class OrderDaoJdbcImpl implements OrderDao {
 
-    private static final Logger LOG = Logger.getLogger(OrderDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(OrderDaoJdbcImpl.class.getName());
 
     @Autowired
     Transaction tx;

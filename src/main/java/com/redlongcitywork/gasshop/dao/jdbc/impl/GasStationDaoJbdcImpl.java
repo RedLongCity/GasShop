@@ -1,10 +1,10 @@
-package com.redlongcitywork.gasshop.jdbc.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.impl;
 
-import com.redlongcitywork.gasshop.dao.FuelDao;
+import com.redlongcitywork.gasshop.dao.GasStationDao;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.jdbc.utils.ConnectionProvider;
 import com.redlongcitywork.gasshop.jdbc.utils.Transaction;
-import com.redlongcitywork.gasshop.models.Fuel;
+import com.redlongcitywork.gasshop.models.GasStation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,42 +20,43 @@ import org.springframework.stereotype.Repository;
  *
  * @author redlongcity 28/10/2017
  */
-@Repository("fuelDao")
-public class FuelDaoImpl implements FuelDao {
+//@Repository("gasStationDao")
+public class GasStationDaoJbdcImpl implements GasStationDao {
 
     @Autowired
     private Transaction tx;
 
-    private static final Logger LOG = Logger.getLogger(FuelDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(GasStationDaoJbdcImpl.class.getName());
 
-    private static final String SQL_SELECT_FUELS
-            = "select * from fuels";
+    private static final String SQL_SELECT_GAS_STATIONS
+            = "select * from gas_stations";
 
-    private static final String SQL_SELECT_FUEL
-            = "select * from fuels where fuel_id = ?";
+    private static final String SQL_SELECT_GAS_STATION
+            = "select * from gas_stations where gas_station_id = ?";
 
-    private static final String SQL_INSERT_FUEL
-            = "insert into fuels (fuel_name) values(?)";
+    private static final String SQL_INSERT_GAS_STATION
+            = "insert into gas_stations (gas_station_name)"
+            + " values(?)";
 
-    private static final String SQL_DELETE_FUEL
-            = "delete from fuels where fuel_id = ?";
+    private static final String SQL_DELETE_GAS_STATION
+            = "delete from gas_stations where gas_station_id = ?";
 
-    private static final String SQL_DELETE_FUEL_GAS_PORTIONS
-            = "delete from gas_portions where fuels_id = ?";
+    private static final String SQL_DELETE_GAS_STATION_GAS_PORTIONS
+            = "delete from gas_portions where gas_stations_gas_station_id = ?";
 
-    private static final String SQL_DELETE_FUEL_REFERENCES
-            = "delete from references where fuels_id = ?";
+    private static final String SQL_DELETE_GAS_STATION_REFERENCES
+            = "delete from references where gas_stations_gas_station_id = ?";
 
-    private static final String SQL_UPDATE_FUEL
-            = "update fuels set fuel_name = ?"
-            + " where fuel_id = ?";
+    private static final String SQL_UPDATE_GAS_STATION
+            = "update gas_station set gas_station_name = ?"
+            + " where gas_station_id = ?";
 
     @Override
-    public List<Fuel> findAll() {
-        List<Fuel> list = new LinkedList<Fuel>();
+    public List<GasStation> findAll() {
+        List<GasStation> list = new LinkedList<GasStation>();
         try {
             PreparedStatement statement = ConnectionProvider.getInstance().
-                    getConnection().prepareStatement(SQL_SELECT_FUELS);
+                    getConnection().prepareStatement(SQL_SELECT_GAS_STATIONS);
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 list.add(convert(set));
@@ -67,43 +68,43 @@ public class FuelDaoImpl implements FuelDao {
     }
 
     @Override
-    public Fuel findById(Integer id) {
+    public GasStation findById(Integer id) {
         checkNotNull(id);
 
-        Fuel fuel = null;
+        GasStation station = null;
         try {
-            Connection connection = ConnectionProvider.getInstance().getConnection();
+            Connection connection = ConnectionProvider.getInstance().
+                    getConnection();
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_SELECT_FUEL);
+                    prepareStatement(SQL_SELECT_GAS_STATION);
             statement.setInt(1, id);
             ResultSet set = statement.executeQuery();
             if (set.next()) {
-                fuel = convert(set);
+                station = convert(set);
             }
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
-        return fuel;
+        return station;
     }
 
     @Override
-    public Fuel save(Fuel fuel) {
+    public GasStation save(GasStation station) {
         Connection connection = tx.getConnection();
 
         try {
             tx.begin();
 
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_INSERT_FUEL);
-            statement.setString(1, fuel.getName());
+                    prepareStatement(SQL_INSERT_GAS_STATION);
+            statement.setString(1, station.getName());
 
             statement.executeUpdate();
 
-            statement = connection.prepareStatement("select last_insert_id()");
+            statement = connection.prepareStatement("select LAST_INSERT_ID()");
             ResultSet set = statement.executeQuery();
-            fuel.setId(set.getInt(1));
+            station.setId(set.getInt(1));
             tx.commit();
-
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         } finally {
@@ -113,31 +114,30 @@ public class FuelDaoImpl implements FuelDao {
                 LOG.log(Level.WARNING, e.getMessage());
             }
         }
-        return fuel;
+        return station;
     }
 
     @Override
-    public void delete(Fuel fuel) {
+    public void delete(GasStation station) {
         Connection connection = tx.getConnection();
 
         try {
             tx.begin();
 
             PreparedStatement statement = connection.
-                    prepareStatement(SQL_DELETE_FUEL_GAS_PORTIONS);
-            statement.setInt(1, fuel.getId());
-            statement.executeUpdate();
-            
-            statement = connection.
-                    prepareStatement(SQL_DELETE_FUEL_REFERENCES);
-            statement.setInt(1, fuel.getId());
-            statement.executeUpdate();
-            
-            statement = connection.
-                    prepareStatement(SQL_DELETE_FUEL);
-            statement.setInt(1, fuel.getId());
+                    prepareStatement(SQL_DELETE_GAS_STATION_GAS_PORTIONS);
+            statement.setInt(1, station.getId());
             statement.executeUpdate();
 
+            statement = connection.
+                    prepareStatement(SQL_DELETE_GAS_STATION_REFERENCES);
+            statement.setInt(1, station.getId());
+            statement.executeUpdate();
+
+            statement = connection.
+                    prepareStatement(SQL_DELETE_GAS_STATION);
+            statement.setInt(1, station.getId());
+            statement.executeUpdate();
             tx.commit();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
@@ -151,28 +151,28 @@ public class FuelDaoImpl implements FuelDao {
     }
 
     @Override
-    public void update(Fuel fuel) {
+    public void update(GasStation station) {
         try {
             PreparedStatement statement = tx.getConnection().
-                    prepareStatement(SQL_UPDATE_FUEL);
-            statement.setString(1, fuel.getName());
-            statement.setInt(2, fuel.getId());
+                    prepareStatement(SQL_UPDATE_GAS_STATION);
+            statement.setString(1, station.getName());
+            statement.setInt(2, station.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
     }
 
-    private Fuel convert(ResultSet resultSet) {
-        Fuel fuel = new Fuel();
+    private GasStation convert(ResultSet set) {
+        GasStation station = new GasStation();
 
         try {
-            fuel.setId(resultSet.getInt("fuel_id"));
-            fuel.setName(resultSet.getString("fuel_name"));
+            station.setId(set.getInt("gas_station_id"));
+            station.setName(set.getString("gas_station_name"));
         } catch (SQLException e) {
             LOG.log(Level.WARNING, e.getMessage());
         }
-        return fuel;
+        return station;
     }
 
 }

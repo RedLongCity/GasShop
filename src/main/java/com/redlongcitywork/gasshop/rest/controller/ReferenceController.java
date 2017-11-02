@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -96,5 +97,46 @@ public class ReferenceController {
         }
         service.deleteReference(reference);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+    
+    @RequestMapping(value="/cost",method=RequestMethod.GET)
+    public ResponseEntity<Float> getCost(
+            @RequestParam(value="fuel") Integer fuelId,
+            @RequestParam(value="station") Integer stationId){
+        Fuel fuel = new Fuel();
+        fuel.setId(fuelId);
+        GasStation station = new GasStation();
+        station.setId(stationId);
+        Float cost = service.getCost(fuel, station);
+        
+        if(cost==null){
+            return new ResponseEntity<Float>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<Float>(cost,HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/averagecost/{id}",method=RequestMethod.GET)
+    public ResponseEntity<Float> getAverageCost(
+            @PathVariable("id") Integer id){
+        Fuel fuel = new Fuel();
+        fuel.setId(id);
+        Float averageCost = service.getAverageCost(fuel);
+        if(averageCost==null){
+            return new ResponseEntity<Float>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<Float>(averageCost,HttpStatus.OK);
+    }
+    
+    @RequestMapping(value="/referencebyfuel/{id}",method=RequestMethod.GET)
+    public ResponseEntity<List<Reference>> getReferencesByFuel(
+            @PathVariable("id") Integer id){
+        Fuel fuel = new Fuel();
+        fuel.setId(id);
+        
+        List<Reference> list = service.findByFuel(fuel);
+        if(list==null){
+            return new ResponseEntity<List<Reference>>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<List<Reference>>(list,HttpStatus.OK);
     }
 }

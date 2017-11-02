@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.redlongcitywork.gasshop.dao.FuelDao;
@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 29/10/2017
  */
 @Repository("fuelDao")
-public class FuelDaoImpl implements FuelDao {
+public class FuelDaoJdbcTemplateImpl implements FuelDao {
 
-    private static final Logger LOG = Logger.getLogger(FuelDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(FuelDaoJdbcTemplateImpl.class.getName());
 
     @Autowired
     private JdbcTemplate template;
@@ -68,7 +68,7 @@ public class FuelDaoImpl implements FuelDao {
         checkNotNull(fuel);
         template.update(SQL_INSERT_FUEL,
                 fuel.getName());
-        fuel.setId(template.queryForObject("select last_insert_id()",
+        fuel.setId(template.queryForObject("select LAST_INSERT_ID()",
                 Integer.class));
         return fuel;
     }

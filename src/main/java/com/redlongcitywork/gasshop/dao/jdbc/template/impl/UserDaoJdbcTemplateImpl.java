@@ -1,4 +1,4 @@
-package com.redlongcitywork.gasshop.jdbc.template.dao.impl;
+package com.redlongcitywork.gasshop.dao.jdbc.template.impl;
 
 import com.redlongcitywork.gasshop.dao.UserDao;
 import com.redlongcitywork.gasshop.jdbc.template.utils.UserProfileRowMapper;
@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @author redlongcity 31/10/2017
  */
 @Repository("userDao")
-public class UserDaoImpl implements UserDao {
+public class UserDaoJdbcTemplateImpl implements UserDao {
 
-    private static final Logger LOG = Logger.getLogger(UserDaoImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(UserDaoJdbcTemplateImpl.class.getName());
 
     @Autowired
     private JdbcTemplate template;
@@ -85,7 +85,7 @@ public class UserDaoImpl implements UserDao {
                 user.getPassword(),
                 user.getProfile().getId());
 
-        user.setId(template.queryForObject("select last_insert_id()",
+        user.setId(template.queryForObject("select LAST_INSERT_ID()",
                 Integer.class));
         return user;
     }

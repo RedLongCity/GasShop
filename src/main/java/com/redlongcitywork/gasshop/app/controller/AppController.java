@@ -13,6 +13,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/")
 public class AppController {
 
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
+    public String getHomePage() {
+        return "home";
+    }
+
+    @RequestMapping(value = "/order", method = RequestMethod.GET)
+    public String getOrderPage() {
+        return "order";
+    }
+
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public String getAdminPage() {
         return "admin";
@@ -23,19 +33,9 @@ public class AppController {
         return "registration";
     }
 
-    @RequestMapping(value = "/newuser", method = RequestMethod.POST)
-    public String saveUser() {
-        return "registration";
-    }
-
     @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
     public String accessSuccessfulPage() {
         return "accessDenied";
-    }
-
-    @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
-    public String accessDeniedPage() {
-        return "accessSuccessful";
     }
 
 }
