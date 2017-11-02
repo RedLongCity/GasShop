@@ -22,6 +22,11 @@ public class AppController {
     public String getOrderPage() {
         return "order";
     }
+    
+    @RequestMapping(value="/profile",method = RequestMethod.GET)
+    public String getProfile(){
+        return "profile";
+    }
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
     public String getAdminPage() {

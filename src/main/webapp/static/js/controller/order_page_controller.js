@@ -9,12 +9,14 @@ App.controller('OrderPageController', ['$scope', 'Fuel', 'Reference', 'Station',
         self.fuels = [];
         self.average_costs = [];
         self.references = [];
+        self.amount;
         self.rowReferenceIndex = -1;
         self.rowFuelIndex = -1;
 
         self.selectReferenceRow = function (index,reference) {
                 self.rowReferenceIndex = index;
                 self.openModal(reference);
+                self.rowReferenceIndex = -1;
         }
 
         self.selectFuelRow = function (index, fuel) {
@@ -23,6 +25,10 @@ App.controller('OrderPageController', ['$scope', 'Fuel', 'Reference', 'Station',
                 self.rowFuelIndex = index;
                 self.references = self.getReferencesByFuel(fuel.id);
             }
+        }
+        
+        self.onFillForm = function(){
+            
         }
 
         self.getAllFuels = function () {

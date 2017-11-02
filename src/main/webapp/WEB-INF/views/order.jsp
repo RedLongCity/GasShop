@@ -66,13 +66,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="f in ctrl.fuels">
-                                        
-                                        <td><span ng-bind="f" ng-class="'bg-primary':rowFuelIndex == $index" 
-                                                  ng-click="ctrl.selectFuelRow($index,f)"></span></td>
+                                    <tr ng-repeat="f in ctrl.fuels" ng-class="'bg-primary':rowFuelIndex == $index" 
+                                        ng-click="ctrl.selectFuelRow($index, f)">
+
+                                        <td><span ng-bind="f"></span></td>
 
                                         <td><span ng-bind="ctrl.average_costs[$index]"></span></td>
-                                        
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -82,24 +82,24 @@
 
                 <div class="col-sm-12 col-xs-12 col-md-7 col-lg-8 schedule-table">
                     <div class="card text-center">
-                        <h2 class="card-title">Средняя цена</h2>
+                        <h2 class="card-title">Цены на АЗС</h2>
                         <div class="table-responsive" ng-controller="OrderController as ctrl">
                             <table class="table text-center table-striped">
                                 <thead>
                                     <tr>
 
-                                        <th>AЗС</th>
+                                        <th>Цена</th>
 
-                                        <th ng-repeat="f in ctrl.fuels"><span ng-bind="f"></span></th>
+                                        <th>АЗС</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="s in ctrl.stations">
-                                        <td><span ng-bind="s"></span></td>
-                                        <td ng-repeat="ci in ctrl.table_content[$index]">
-                                            <span ng-bind="ci"></span>
-                                        </td>
+                                    <tr ng-repeat="r in ctrl.references" ng-class="'bg-primary'rowReferenceIndex == $index" 
+                                        ng-click="ctrl.selectReferenceRow($index, r)">
+
+                                        <td><span ng-bind="r.cost"></span></td>
+                                        <td><span ng-bind="r.station.name"></span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -109,6 +109,43 @@
             </section>
 
         </main>
+
+        <!-- Modal -->
+        <div class="modal fade" id="order_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Добавить в заказ:</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" ng-controller="OrderController as ctrl">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    АЗС:
+                                    <span ng-bind=" ctrl.reference.station.name"></span>
+                                    Топливо:
+                                    <span ng-bind=" ctrl.reference.fuel.name"></span>
+                                </div>
+                                <div class="col-md-1">
+                                    <input type="number" ng-model="ctrl.amount" placeholder="л." ng-change="ctrl.onFillForm()"
+                                           title="Кратно 20 л.">
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-secondary">Закрыть</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-primary">Добавить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
