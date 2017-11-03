@@ -2,26 +2,24 @@ package com.redlongcitywork.gasshop.models;
 
 /**
  *
- * @author redlongcity
- * 28/10/2017
- * model of user account
+ * @author redlongcity 28/10/2017 model of user account
  */
 public class User {
-    
+
     private Integer id;
-    
+
     private String firstName;
-    
+
     private String lastName;
-    
+
     private String email;
-    
+
     private String tel;
-    
+
     private String address;
-    
+
     private String password;
-    
+
     private UserProfile profile;
 
     public int getId() {
@@ -92,5 +90,5 @@ public class User {
     public String toString() {
         return "User{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", tel=" + tel + ", address=" + address + ", password=" + password + ", profile=" + profile + '}';
     }
-    
+
 }

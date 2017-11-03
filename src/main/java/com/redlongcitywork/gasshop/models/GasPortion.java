@@ -2,24 +2,22 @@ package com.redlongcitywork.gasshop.models;
 
 /**
  *
- * @author redlongcity
- * 28/10/2017
- * model keeps item of order
+ * @author redlongcity 28/10/2017 model keeps item of order
  */
 public class GasPortion {
-    
+
     private Integer id;
-    
+
     private Integer amount;
-    
+
     private GasStation station;
-    
+
     private Fuel fuel;
-    
+
     public Integer getId() {
         return id;
     }
-    
+
     public void setId(Integer id) {
         this.id = id;
     }

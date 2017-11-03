@@ -5,6 +5,7 @@ import com.redlongcitywork.gasshop.service.FuelService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author redlongcity 
- * 29/10/2017 
- * Controller for endpoints of Fuel
+ * @author redlongcity 29/10/2017 Controller for endpoints of Fuel
  */
 @RestController
 @RequestMapping("/json")
@@ -26,23 +25,14 @@ public class FuelController {
     private FuelService service;
     
     @RequestMapping(value="/do",method=RequestMethod.GET)
-    public ResponseEntity<Fuel> doSomething(){
+    public ResponseEntity<Void> doSomething(){
         Fuel fuel = new Fuel();
         fuel.setName("А80");
         service.saveFuel(fuel);
-        
-        fuel.setName("A76");
-        service.updateFuel(fuel);
-        
         Fuel fuel2 = new Fuel();
-        fuel2.setName("ДТ");
-
-        List<Fuel> list = service.findAll();
-        
-        service.deleteFuel(fuel);
-        
-        return new ResponseEntity<Fuel>(fuel2,HttpStatus.OK);
-        
+        fuel2.setName("А95");
+        service.saveFuel(fuel2);
+    return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/fuel", method = RequestMethod.GET)

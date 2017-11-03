@@ -45,7 +45,7 @@ public class GasStationDaoJbdcImpl implements GasStationDao {
             = "delete from gas_portions where gas_stations_gas_station_id = ?";
 
     private static final String SQL_DELETE_GAS_STATION_REFERENCES
-            = "delete from references where gas_stations_gas_station_id = ?";
+            = "delete from refers where gas_stations_gas_station_id = ?";
 
     private static final String SQL_UPDATE_GAS_STATION
             = "update gas_station set gas_station_name = ?"

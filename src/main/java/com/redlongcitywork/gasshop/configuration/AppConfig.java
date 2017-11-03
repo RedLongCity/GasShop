@@ -10,7 +10,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -25,6 +27,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration
 @EnableWebMvc
+@EnableTransactionManagement
 @ComponentScan(basePackages = "com.redlongcitywork.gasshop")
 @PropertySource("classpath:application.properties")
 public class AppConfig extends WebMvcConfigurerAdapter {
@@ -33,7 +36,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     private static final String PROP_DATABASE_PASSWORD = "db.password";
     private static final String PROP_DATABASE_URL = "db.url";
     private static final String PROP_DATABASE_USERNAME = "db.username";
-    
+
     @Resource
     private Environment env;
 
@@ -71,13 +74,18 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         dataSource.setUrl(env.getRequiredProperty(PROP_DATABASE_URL));
         dataSource.setUsername(env.getRequiredProperty(PROP_DATABASE_USERNAME));
         dataSource.setPassword(env.getRequiredProperty(PROP_DATABASE_PASSWORD));
-        
+
         return dataSource;
     }
-    
+
     @Bean
-    public JdbcTemplate jdbcTemplate(){
+    public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(dataSource());
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
 }

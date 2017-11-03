@@ -31,41 +31,41 @@ public class ReferenceDaoJdbcImpl implements ReferenceDao {
     Transaction tx;
 
     private static final String SQL_SELECT_ALL_REFERENCES
-            = "select * from references";
+            = "select * from refers";
 
     private static final String SQL_SELECT_REFERENCE
-            = "select * from references where reference_id = ?";
+            = "select * from refers where reference_id = ?";
 
     private static final String SQL_INSERT_REFERENCE
-            = "insert into references"
+            = "insert into refers"
             + " (cost, gas_stations_gas_station_id, fuels_id)"
             + " values(?, ?, ?)";
 
     private static final String SQL_UPDATE_REFERENCE
-            = "update references set cost = ?, gas_stations_gas_station_id = ?,"
+            = "update refers set cost = ?, gas_stations_gas_station_id = ?,"
             + "fuels_id = ?, where reference_id = ?";
 
     private static final String SQL_DELETE_REFERENCE
-            = "delete from references wher reference_id = ?";
+            = "delete from refers wher reference_id = ?";
 
     private static final String SQL_SELECT_GAS_STATION_BY_REFERENCE_ID
             = " select gs.* from gas_stations gs "
-            + " inner join references ref on ref.gas_stations_gas_station_id = "
+            + " inner join refers ref on ref.gas_stations_gas_station_id = "
             + "gs.gas_station_id where ref.reference_id = ?";
 
     private static final String SQL_SELECT_FUEL_BY_REFERENCE_ID
-            = "select f.* from fuels f inner join references ref"
+            = "select f.* from fuels f inner join refers ref"
             + " on ref.fuels_id = f.fuel_id where ref.reference_id = ?";
 
     private static final String SQL_SELECT_COST_FOR_FUEL_AND_STATION
-            = "select cost from references where fuels_id = ?"
+            = "select cost from refers where fuels_id = ?"
             + "and gas_stations_gas_station_id = ?";
 
     private static final String SQL_SELECT_AVERAGE_COST
-            = "select AVG(cost) from references where fuels_id = ?";
+            = "select AVG(cost) from refers where fuels_id = ?";
 
     private static final String SQL_SELECT_REFERENCES_BY_FUEL_ID
-            = "select * from references where fuels_id = ?";
+            = "select * from refers where fuels_id = ?";
 
     @Override
     public List<Reference> findAll() {

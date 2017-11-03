@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author redlongcity
- * 29/10/2017
+ * @author redlongcity 29/10/2017
  */
 @Service("orderService")
 public class OrderServiceImpl implements OrderService {
@@ -58,5 +57,5 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
-    
+
 }

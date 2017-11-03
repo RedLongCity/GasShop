@@ -9,11 +9,10 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author redlongcity
- * 29/10/2017
+ * @author redlongcity 29/10/2017
  */
 @Service("gasPorionService")
-public class GasPortionServiceImpl implements GasPortionService{
+public class GasPortionServiceImpl implements GasPortionService {
 
     @Autowired
     private GasPortionDao dao;
@@ -30,7 +29,7 @@ public class GasPortionServiceImpl implements GasPortionService{
 
     @Override
     public GasPortion saveGasPortion(GasPortion portion) {
-       return dao.save(portion);
+        return dao.save(portion);
     }
 
     @Override
@@ -57,5 +56,5 @@ public class GasPortionServiceImpl implements GasPortionService{
             }
         }
     }
-    
+
 }

@@ -40,7 +40,7 @@ public class FuelDaoJdbcTemplateImpl implements FuelDao {
             = "delete from gas_portions where fuels_id = ?";
 
     private static final String SQL_DELETE_FUEL_REFERENCES
-            = "delete from references where fuels_id = ?";
+            = "delete from refers where fuels_id = ?";
 
     private static final String SQL_UPDATE_FUEL
             = "update fuels set fuel_name = ?"

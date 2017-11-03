@@ -5,11 +5,10 @@ import java.util.List;
 
 /**
  *
- * @author redlongcity
- * 29/10/2017
+ * @author redlongcity 29/10/2017
  */
 public interface GasStationService {
-    
+
     List<GasStation> findAll();
 
     GasStation findById(Integer id);

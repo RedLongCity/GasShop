@@ -2,14 +2,12 @@ package com.redlongcitywork.gasshop.models;
 
 /**
  *
- * @author redlongcity
- * 28/10/2017
- * model of fuel type
+ * @author redlongcity 28/10/2017 model of fuel type
  */
 public class Fuel {
-        
+
     private Integer id;
-    
+
     private String name;
 
     public int getId() {
@@ -32,6 +30,5 @@ public class Fuel {
     public String toString() {
         return "Fuel{" + "id=" + id + ", name=" + name + '}';
     }
-    
-    
+
 }

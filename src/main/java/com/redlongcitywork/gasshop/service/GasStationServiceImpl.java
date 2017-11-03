@@ -12,30 +12,30 @@ import org.springframework.stereotype.Service;
  */
 @Service("gasStationService")
 public class GasStationServiceImpl implements GasStationService {
-    
+
     @Autowired
     private GasStationDao dao;
-    
+
     @Override
     public List<GasStation> findAll() {
         return dao.findAll();
     }
-    
+
     @Override
     public GasStation findById(Integer id) {
         return dao.findById(id);
     }
-    
+
     @Override
     public void saveGasStation(GasStation station) {
         dao.save(station);
     }
-    
+
     @Override
     public void deleteGasStation(GasStation station) {
         dao.delete(station);
     }
-    
+
     @Override
     public void updateGasStation(GasStation station) {
         GasStation entity = dao.findById(station.getId());
@@ -43,7 +43,7 @@ public class GasStationServiceImpl implements GasStationService {
             entity.setName(station.getName());
         }
     }
-    
+
     @Override
     public void deleteAll() {
         List<GasStation> list = dao.findAll();
@@ -53,5 +53,5 @@ public class GasStationServiceImpl implements GasStationService {
             }
         }
     }
-    
+
 }
